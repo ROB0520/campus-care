@@ -3,6 +3,7 @@ import { Hospital } from "lucide-react"
 import { LoginForm } from "@/components/login-form"
 import LoginBg from '@/app/login-bg.jpg'
 import Image from "next/image"
+import { Suspense } from 'react'
 
 import { Metadata } from "next"
 
@@ -26,7 +27,9 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
+            <Suspense>
             <LoginForm />
+           </Suspense>
           </div>
         </div>
       </div>
