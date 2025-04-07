@@ -49,6 +49,7 @@ export default function Profile() {
 		}
 	}, [form, session])
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onSubmit = async (data: any) => {
 		if (!session || !session.user) return
 		

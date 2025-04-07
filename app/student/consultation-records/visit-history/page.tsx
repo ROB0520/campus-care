@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import {
@@ -9,45 +10,15 @@ import {
 	TableRow,
 } from "@/components/ui/table"
 import { Separator } from "@/components/ui/separator"
-import { Input } from "@/components/ui/input"
 import { fetchConsultHistory, fetchUser, type ConsultHistory } from "../fetch"
-import { useEffect, useId, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import moment from "moment-timezone"
 import { Button } from "@/components/ui/button"
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-	DialogFooter,
-	DialogClose,
-} from "@/components/ui/dialog"
-import {
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList,
-} from "@/components/ui/command"
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover"
-import { CalendarIcon, Check, ChevronsUpDown, CircleUserRound, ClockIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Label } from "@/components/ui/label"
-import { format } from "date-fns"
-import { Calendar } from "@/components/ui/calendar"
 import { toast } from "sonner"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
-
-
+import { CircleUserRound } from "lucide-react"
 
 export default function VisitHistory() {
 	const searchParams = useSearchParams()

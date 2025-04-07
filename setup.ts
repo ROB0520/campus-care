@@ -1,5 +1,4 @@
 import { hashPassword } from '@/lib/utils';
-import { createConnection } from '@/lib/db';
 import moment from 'moment-timezone';
 import mysql from 'mysql2/promise';
 
@@ -11,11 +10,11 @@ dotenv.config({
 async function main() {
 	// Create a connection to the database
 	const connection = await mysql.createConnection({
-		host: process.env.DB_HOST,
-		user: process.env.DB_USER,
-		password: process.env.DB_PASSWORD,
-		database: process.env.DB_NAME,
-		port: Number(process.env.DB_PORT),
+		host: '51.79.196.57',
+		user: 'root',
+		password: 'egXHOV9R7rZoLchotBud7F3RXSUn7r4Wt1UpQkzLW3LsgPJw23efXCG0dBKG5LHF',
+		database: 'default',
+		port: Number(3307),
 	});
 
 	try {
@@ -72,11 +71,12 @@ async function main() {
 
 		// Insert clinic users
 		for (const clinicUser of clinicUsers) {
-			const [userResult] = await connection.query(
+			const [userResult] = await connection.query<mysql.RowDataPacket[]>(
 				`INSERT INTO Users (email, password, role) VALUES (?, ?, ?)`,
 
 				[`${clinicUser.lastName.toLowerCase()}@clinic.edu`, hashedPassword, '1']
 			);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const userId = (userResult as any).insertId;
 
 			await connection.query(
@@ -93,6 +93,7 @@ async function main() {
 
 				[`${student.lastName.toLowerCase()}@school.edu`, hashedPassword, '0']
 			);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const userId = (userResult as any).insertId;
 
 			// Insert personal information
@@ -209,12 +210,16 @@ async function main() {
 				);
 
 				// Ensure there are clinic users with role 1
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				if ((clinicUsersWithRole1 as any[]).length > 0) {
 					console.log('Clinic users with role 1:', clinicUsersWithRole1);
-					
-					const attendingPersonnelId = (clinicUsersWithRole1 as any[])[Math.floor(Math.random() * (clinicUsersWithRole1 as any[]).length)].id;
+
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const attendingPersonnelId = (clinicUsersWithRole1 as any[])[Math.floor(Math.random() *
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						(clinicUsersWithRole1 as any[]).length)].id;
 					console.log('Attending personnel ID:', attendingPersonnelId);
-					
+
 
 					await connection.query(
 						`INSERT INTO ConsultationHistory (userId, attendingPersonnel, reason, diagnosis, medication, remarks, consultation_timestamp)

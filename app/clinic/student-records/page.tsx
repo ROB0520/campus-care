@@ -30,7 +30,7 @@ export default function StudentRecords() {
 			setLoading(false)
 		}
 		fetchData()
-	}, [])
+	}, [searchParams])
 
 	return <div className="flex flex-col gap-3">
 		<div className="flex items-center justify-between">

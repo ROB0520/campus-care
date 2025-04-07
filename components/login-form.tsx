@@ -17,6 +17,7 @@ export function LoginForm({
   const searchParams = useSearchParams()
   const router = useRouter()
   const toggleVisibility = () => setIsVisible((prevState) => !prevState)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const credentialsAction = (formData: any) => {
     signIn("credentials", {
       email: formData.get("email"),

@@ -3,6 +3,7 @@
 import { createConnection } from "@/lib/db"
 import mysql from "mysql2/promise"
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function saveData(formData: any) {
 	const connection = await createConnection()
 

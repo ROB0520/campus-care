@@ -6,6 +6,7 @@ import { userSchema as userFormSchema } from "@/lib/schema/user";
 import { personalInformationSchema } from "@/lib/schema/personal-information";
 import { healthSurveySchema } from "@/lib/schema/health-survey";
 import { appointmentSchema } from "@/lib/schema/appointment";
+import mysql from "mysql2/promise";
 
 const UserSchema = userFormSchema
 	.omit({ password: true, confirmPassword: true })
@@ -24,7 +25,7 @@ export type UserSchema = z.infer<typeof UserSchema>;
 export async function fetchUser(userId: number): Promise<UserSchema & { hasPersonalInfo: boolean; hasMedicalSurvey: boolean }> {
 	const connection = await createConnection()
 	
-	const [userRows] = await connection.execute(
+	const [userRows] = await connection.execute<mysql.RowDataPacket[]>(
 		`SELECT 
 			pi.firstName,
 			pi.middleName,
@@ -94,7 +95,7 @@ export async function fetchUser(userId: number): Promise<UserSchema & { hasPerso
 		[userId]
 	);
 
-	const [appointmentRows] = await connection.execute(
+	const [appointmentRows] = await connection.execute<mysql.RowDataPacket[]>(
 		`SELECT 
 			id AS appointmentId,
 			appointment_timestamp,

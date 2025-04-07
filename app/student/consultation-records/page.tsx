@@ -10,7 +10,9 @@ import { hasCompletedProfile } from "../checkCompleteProfile";
 
 export default function ConsultationRecords() {
 	const { data: session } = useSession()
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const [user, setUser] = useState<any>();
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const [completionData, setCompletionData] = useState<any>(null)
 
 	useEffect(() => {
