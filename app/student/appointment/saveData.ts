@@ -19,7 +19,7 @@ export async function saveAppointment(date: number, userId: number) {
 	}
 
 	// Insert the appointment data into the database
-	await connection.query(`INSERT INTO appointments (userId, appointment_timestamp) VALUES (?, ?)`, [userId, date])
+	await connection.query(`INSERT INTO Appointments (userId, appointment_timestamp) VALUES (?, ?)`, [userId, date])
 
 	// Close the database connection
 	await connection.end()

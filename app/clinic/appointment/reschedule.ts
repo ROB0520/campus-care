@@ -14,7 +14,7 @@ export async function rescheduleAppointment(appointmentId: number, newDate: numb
 		[newDate, appointmentId]
 	)
 
-	// Fetch the updated appointments list
+	// Fetch the updated Appointments list
 	const [rows] = await fetchAppointments()
 
 	await connection.end()

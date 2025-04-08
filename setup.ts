@@ -195,7 +195,7 @@ async function main() {
 				]
 			);
 
-			// Insert appointments and consultation histories
+			// Insert Appointments and consultation histories
 			for (let i = 0; i < 5; i++) {
 				await connection.query(
 					`INSERT INTO Appointments (userId, appointment_timestamp, status) VALUES (?, ?, ?)`,
@@ -204,15 +204,15 @@ async function main() {
 				);
 
 				const consultationData = getRandomConsultationData();
-				// Fetch clinic users with role 1
+				// Fetch clinic Users with role 1
 				const [clinicUsersWithRole1] = await connection.query(
 					`SELECT id FROM Users WHERE role = 1`
 				);
 
-				// Ensure there are clinic users with role 1
+				// Ensure there are clinic Users with role 1
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				if ((clinicUsersWithRole1 as any[]).length > 0) {
-					console.log('Clinic users with role 1:', clinicUsersWithRole1);
+					console.log('Clinic Users with role 1:', clinicUsersWithRole1);
 
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					const attendingPersonnelId = (clinicUsersWithRole1 as any[])[Math.floor(Math.random() *
@@ -236,7 +236,7 @@ async function main() {
 						]
 					);
 				} else {
-					console.warn('No clinic users with role 1 found.');
+					console.warn('No clinic Users with role 1 found.');
 				}
 			}
 		}

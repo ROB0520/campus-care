@@ -100,7 +100,7 @@ export default function Appointment() {
 						08:00AM TO 6:00PM
 					</h1>
 					<p className="text-sm text-center">
-						Our campus clinic is open from 8:00 AM to 6:00 PM, Monday through Friday, providing medical services and healthcare support to students and staff. Whether you need a routine check-up, consultation, or urgent care, our clinic is here to assist you during these hours. Walk-ins and appointments are welcome.
+						Our campus clinic is open from 8:00 AM to 6:00 PM, Monday through Friday, providing medical services and healthcare support to students and staff. Whether you need a routine check-up, consultation, or urgent care, our clinic is here to assist you during these hours. Walk-ins and Appointments are welcome.
 					</p>
 				</div>
 				<div className="flex flex-col items-center gap-3 w-1/3 bg-secondary p-5 rounded-lg">

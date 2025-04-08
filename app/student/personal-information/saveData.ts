@@ -9,18 +9,18 @@ export async function saveData(formData: any) {
 
 	// Check if the userId already exists
 	const [existingRows] = await connection.execute<mysql.RowDataPacket[]>(
-		`SELECT * FROM personalinformation WHERE userId = ?`,
+		`SELECT * FROM PersonalInformation WHERE userId = ?`,
 		[formData.userId]
 	)
 	
 	if (existingRows.length === 0) {
 		await connection.query(
-			`INSERT INTO personalinformation SET ?`,
+			`INSERT INTO PersonalInformation SET ?`,
 			formData
 		)
 	} else {
 		await connection.query(
-			`UPDATE personalinformation SET ? WHERE userId = ?`,
+			`UPDATE PersonalInformation SET ? WHERE userId = ?`,
 			[formData, formData.userId]
 		)
 	}

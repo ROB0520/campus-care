@@ -7,7 +7,7 @@ export async function fetchClinicProfile(userId: string) {
 	const connection = await createConnection()
 	const [rows] = await connection.execute<mysql.RowDataPacket[]>(`
 		SELECT * 
-		FROM clinicprofile 
+		FROM ClinicProfile 
 		WHERE userId = ?
 		`, [userId])
 	

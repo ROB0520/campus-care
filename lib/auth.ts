@@ -62,7 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				const connection = await createConnection()
 
 				const [rows] = await connection.execute<mysql.RowDataPacket[]>(
-					'SELECT * FROM users WHERE email = ? AND password = ?',
+					'SELECT * FROM Users WHERE email = ? AND password = ?',
 					[credentials.email, pwHash]
 				);
 
