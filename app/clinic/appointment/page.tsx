@@ -45,12 +45,12 @@ export default function AppointmentPage() {
 
 	useEffect(() => {
 		fetchData()
-	}, [fetchData])
+	}, [])
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	async function fetchData() {
 		setLoading(true)
-		const data = await fetchAppointments(searchParams?.get('s') || undefined)
+		const data = await fetchAppointments(searchParams?.get('s') || '')
 		setAppointments(data)
 		setLoading(false)
 	}
