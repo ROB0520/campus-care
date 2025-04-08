@@ -44,10 +44,16 @@ export default function AppointmentPage() {
 	const router = useRouter()
 
 	useEffect(() => {
-		fetchData()
-	}, [])
+		async function fetchInitialData() {
+			setLoading(true)
+			const data = await fetchAppointments(searchParams?.get('s') || '')
+			setAppointments(data)
+			setLoading(false)
+		}
+		fetchInitialData()
+	}, [searchParams])
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+	 
 	async function fetchData() {
 		setLoading(true)
 		const data = await fetchAppointments(searchParams?.get('s') || '')
