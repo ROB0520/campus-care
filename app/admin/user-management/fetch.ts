@@ -63,12 +63,15 @@ export async function fetchUsers(searchQuery?: string): Promise<User[]> {
 		})),
 	]
 	.sort((a, b) => {
-		const lastNameComparison = a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());
-		if (lastNameComparison !== 0) {
-			return lastNameComparison;
-		}
-		return a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase());
-	});
+		return a.userId - b.userId;
+	})
+	// .sort((a, b) => {
+	// 	const lastNameComparison = a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());
+	// 	if (lastNameComparison !== 0) {
+	// 		return lastNameComparison;
+	// 	}
+	// 	return a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase());
+	// });
 
 	await connection.end()
 
