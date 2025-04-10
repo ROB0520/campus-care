@@ -11,7 +11,7 @@ export async function toggleLock(userId: string) {
 	const connection = await createConnection()
 
 	const [rows] = await connection.query<RowDataPacket[]>(
-		"SELECT isLocked FROM users WHERE id = ?",
+		"SELECT isLocked FROM Users WHERE id = ?",
 		[userId]
 	);
 
@@ -24,7 +24,7 @@ export async function toggleLock(userId: string) {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const [updateResult]: any = await connection.query(
-		"UPDATE users SET isLocked = ? WHERE id = ?",
+		"UPDATE Users SET isLocked = ? WHERE id = ?",
 		[!isLocked, userId]
 	)
 
@@ -41,7 +41,7 @@ export async function sendResetEmail(email: string) {
 	const connection = await createConnection()
 
 	const [userCheck] = await connection.query<RowDataPacket[]>(
-		"SELECT * FROM users WHERE email = ?",
+		"SELECT * FROM Users WHERE email = ?",
 		[email]
 	)
 	if (userCheck.length === 0) {

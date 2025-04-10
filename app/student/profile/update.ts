@@ -8,7 +8,7 @@ export async function updateProfile(userId: string, currentPassword: string, new
 	const connection = await createConnection()
 
 	const [userCheck] = await connection.query<RowDataPacket[]>(
-		"SELECT * FROM users WHERE id = ? AND password = ?",
+		"SELECT * FROM Users WHERE id = ? AND password = ?",
 		[userId, hashPassword(currentPassword)]
 	)
 	if (userCheck.length === 0) {
@@ -17,7 +17,7 @@ export async function updateProfile(userId: string, currentPassword: string, new
 	}
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const [updateResult]: any = await connection.query(
-		"UPDATE users SET password = ? WHERE id = ?",
+		"UPDATE Users SET password = ? WHERE id = ?",
 		[hashPassword(newPassword), userId]
 	)
 	if (updateResult.affectedRows === 0) {

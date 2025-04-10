@@ -31,7 +31,7 @@ export async function resetPassword(userId: string, newPassword: string, token: 
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const [updateResult]: any = await connection.query(
-		"UPDATE users SET password = ? WHERE id = ?",
+		"UPDATE Users SET password = ? WHERE id = ?",
 		[hashPassword(newPassword), userId]
 	)
 	if (updateResult.affectedRows === 0) {
@@ -47,7 +47,7 @@ export async function sendResetEmail(email: string) {
 	const connection = await createConnection()
 
 	const [userCheck] = await connection.query<RowDataPacket[]>(
-		"SELECT * FROM users WHERE email = ?",
+		"SELECT * FROM Users WHERE email = ?",
 		[email]
 	)
 	if (userCheck.length === 0) {
