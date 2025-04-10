@@ -517,7 +517,7 @@ export default function Home() {
                         <FormItem className="flex items-center gap-4">
                           <FormControl>
                             <RadioGroup
-                              onValueChange={(v) => field.onChange(v ? "true" : "false")}
+                              onValueChange={(value) => field.onChange(Boolean(value))}
                               value={String(field.value)}
                               className="flex flex-row items-center gap-4"
                               ref={field.ref}
@@ -574,7 +574,7 @@ export default function Home() {
                         <FormItem className="flex items-center gap-4">
                           <FormControl>
                             <RadioGroup
-                              onValueChange={(v) => field.onChange(v ? "true" : "false")}
+                              onValueChange={(value) => field.onChange(Boolean(value))}
                               value={String(field.value)}
                               className="flex flex-row items-center gap-4"
                               ref={field.ref}
@@ -615,7 +615,7 @@ export default function Home() {
                         <FormItem className="flex items-center gap-4">
                           <FormControl>
                             <RadioGroup
-                              onValueChange={(v) => field.onChange(v ? "true" : "false")}
+                              onValueChange={(value) => field.onChange(Boolean(value))}
                               value={String(field.value)}
                               className="flex flex-row items-center gap-4"
                               ref={field.ref}
@@ -672,7 +672,7 @@ export default function Home() {
                         <FormItem className="flex items-center gap-4">
                           <FormControl>
                             <RadioGroup
-                              onValueChange={(v) => field.onChange(v ? "true" : "false")}
+                              onValueChange={(value) => field.onChange(Boolean(value))}
                               value={String(field.value)}
                               className="flex flex-row items-center gap-4"
                             >
