@@ -9,7 +9,7 @@ export async function saveAppointment(date: number, userId: number) {
 	// Check if there is already an appointment on the same day based on date
 	const [rows] = await connection.query<mysql.RowDataPacket[]>(`
 		SELECT COUNT(*) AS count
-		FROM appointments
+		FROM Appointments
 		WHERE DATE(FROM_UNIXTIME(appointment_timestamp)) = DATE(FROM_UNIXTIME(?)) AND
 		userId = ?
 	`, [date, userId])	

@@ -74,7 +74,7 @@ const main = {
 const container = {
 	margin: '0 auto',
 	padding: '20px 25px 48px',
-	backgroundImage: 'url("/email-bg.png")',
+	backgroundImage: `url("${baseUrl}/email-bg.png")`,
 	backgroundPosition: 'bottom',
 	backgroundRepeat: 'no-repeat, no-repeat',
 };
