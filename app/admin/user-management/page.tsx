@@ -11,7 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { fetchUsers, type User } from "./fetch"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Lock, LockOpen, RotateCcw } from "lucide-react"
 import Link from "next/link"
@@ -30,8 +30,17 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "sonner"
-import { sendResetEmail, toggleLock } from "./account"
+import { sendResetEmail, toggleLock, inviteUser } from "./account"
 import { useSession } from "next-auth/react"
+import { Label } from "@/components/ui/label"
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select"
+
 
 export default function StudentRecords() {
 	const [users, setUsers] = useState<User[]>([])
@@ -39,6 +48,8 @@ export default function StudentRecords() {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const session = useSession()
+	const emailRef = useRef<HTMLInputElement>(null)
+	const [role, setRole] = useState<string>('')
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -52,29 +63,117 @@ export default function StudentRecords() {
 	return <div className="flex flex-col gap-3">
 		<div className="flex items-center justify-between">
 			<h1 className="text-2xl font-bold">User Accounts</h1>
-			<Input
-				type="text"
-				placeholder="Search the User ID or Name"
-				className="w-1/3"
-				defaultValue={searchParams?.get('s') || ''}
-				disabled={loading}
-				onKeyDown={async (e) => {
-					if (e.key === 'Enter') {
-						const input = e.currentTarget.value
-						setLoading(true)
-						const data = await fetchUsers(input)
-						const params = new URLSearchParams(searchParams?.toString())
-						if (input) {
-							params.set('s', input)
-						} else {
-							params.delete('s')
+			<div className="flex items-center flex-row gap-2 w-1/2">
+				<Dialog>
+					<DialogTrigger asChild>
+						<Button
+							variant="default"
+						>
+							Invite User
+						</Button>
+					</DialogTrigger>
+					<DialogContent className="sm:max-w-[425px]">
+						<DialogHeader>
+							<DialogTitle>
+								Invite User
+							</DialogTitle>
+							<DialogDescription>
+								Invite a new user to the system. This will create a new account and send an email to the user with the credentials to log in.
+							</DialogDescription>
+						</DialogHeader>
+						<div className="flex flex-col gap-2">
+							<Label htmlFor="email" className="text-sm font-medium leading-none peer">
+								Email Address
+							</Label>
+							<Input
+								type="email"
+								id="email"
+								placeholder="Email Address"
+								className="w-full"
+								ref={emailRef}
+							/>
+							<Label htmlFor="role" className="text-sm font-medium leading-none peer">
+								Role
+							</Label>
+							<Select
+								onValueChange={(value) => {
+									setRole(value)
+								}}
+							>
+								<SelectTrigger>
+									<SelectValue placeholder="Select a Role" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="0">Student</SelectItem>
+									<SelectItem value="1">Clinic Personnel</SelectItem>
+									<SelectItem value="2">Admin</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+						<DialogFooter>
+							<DialogClose asChild>
+								<Button
+									variant="default"
+									onClick={() => {
+										if (emailRef.current?.value) {
+											const email = emailRef.current.value
+											const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+											if (emailRegex.test(email)) {
+												if (role.length > 0) {
+													inviteUser(email, role).then(() => {
+														toast.success(`Invitation sent to ${email}`)
+														fetchUsers(searchParams?.get('s') || '').then((data) => {
+															setUsers(data)
+															setRole('')
+														})
+													}).catch((error) => {
+														toast.error(error.message)
+														setRole('')
+													})
+												} else {
+													toast.error('Please select a role')
+													setRole('')
+												}
+											} else {
+												toast.error('Please enter a valid email address')
+												setRole('')
+											}
+										} else {
+											toast.error('Please enter a valid email address')
+											setRole('')
+										}
+									}}
+								>
+									Send Invitation
+								</Button>
+							</DialogClose>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
+				<Input
+					type="text"
+					placeholder="Search the User ID or Name"
+					className="w-full"
+					defaultValue={searchParams?.get('s') || ''}
+					disabled={loading}
+					onKeyDown={async (e) => {
+						if (e.key === 'Enter') {
+							const input = e.currentTarget.value
+							setLoading(true)
+							const data = await fetchUsers(input)
+							const params = new URLSearchParams(searchParams?.toString())
+							if (input) {
+								params.set('s', input)
+							} else {
+								params.delete('s')
+							}
+							router.push(`/admin/user-management?${params.toString()}`)
+							setUsers(data)
+							setLoading(false)
 						}
-						router.push(`/admin/user-management?${params.toString()}`)
-						setUsers(data)
-						setLoading(false)
-					}
-				}}
-			/>
+					}}
+				/>
+			</div>
 		</div>
 		<Separator />
 		<div className="max-h-[80dvh] flex flex-col gap-3 bg-secondary">
@@ -98,8 +197,8 @@ export default function StudentRecords() {
 						) : users.map((user) => (
 							<TableRow key={'ur-' + user.userId} className="hover:bg-primary/15">
 								<TableCell className="font-medium">{user.userId}</TableCell>
-								<TableCell>{user.lastName}</TableCell>
-								<TableCell>{user.firstName}</TableCell>
+								<TableCell>{user.lastName || <Badge variant='destructive'>N/A</Badge>}</TableCell>
+								<TableCell>{user.firstName || <Badge variant='destructive'>N/A</Badge>}</TableCell>
 								<TableCell>
 									<Link
 										href={`mailto:${user.email}`}

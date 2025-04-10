@@ -12,10 +12,11 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { LogOut, CircleUserRound, Pencil, Users } from 'lucide-react'
+import { LogOut, Users } from 'lucide-react'
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut } from "next-auth/react"
+import SidebarHead from "./sidebar-head"
 
 export function AppSidebar({
 	name
@@ -27,23 +28,7 @@ export function AppSidebar({
 	return (
 		<Sidebar>
 			<SidebarHeader>
-				<div className="flex items-center gap-2 w-full bg-accent p-2 rounded-md">
-					<CircleUserRound className="size-6" />
-					<p className="flex-1">
-						{name}
-					</p>
-					<Button
-						variant='ghost'
-						size='icon'
-						asChild
-					>
-						<Link
-							href='/admin/profile'
-						>
-							<Pencil className="size-4" />
-						</Link>
-					</Button>
-				</div>
+				<SidebarHead name={name} />
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>

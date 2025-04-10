@@ -32,7 +32,6 @@ const basicInfoSchema = personalInformationSchema.pick({
   dateOfBirth: true,
   address: true,
   contactNumber: true,
-  email: true,
   height: true,
   weight: true,
   bloodType: true,
@@ -166,7 +165,7 @@ export default function BasicInformation() {
               </TabsTrigger>
             </TabsList>
             <div>
-              <div className="p-4 rounded-md shadow bg-card border border-border min-w-lg">
+              <div className="p-4 rounded-md shadow bg-card border border-border min-w-lg max-h-[70dvh] overflow-y-auto">
                 <TabsContent value="basic-information">
                   <div className="grid grid-cols-1 gap-4">
                     <FormField
@@ -302,21 +301,6 @@ export default function BasicInformation() {
                         <FormItem className="flex flex-col *:w-full gap-2">
                           <div className="flex flex-row gap-4 items-center">
                             <FormLabel className="flex-1/3">Contact Number:</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col *:w-full gap-2">
-                          <div className="flex flex-row gap-4 items-center">
-                            <FormLabel className="flex-1/3">Email Address:</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>

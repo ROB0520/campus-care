@@ -198,7 +198,7 @@ export default function Home() {
               </TabsTrigger>
             </TabsList>
             <div>
-              <div className="p-4 rounded-md shadow bg-card border border-border">
+              <div className="p-4 rounded-md shadow bg-card border border-border max-h-[70dvh] overflow-y-auto">
                 <TabsContent value="health-assessment">
                   <div className="grid grid-cols-1 gap-4">
                     <p className="italic">Note: Please check any symptoms you are currently experiencing</p>

@@ -8,7 +8,7 @@ export const consultationHistorySchema = z.object({
 	diagnosis: z.string(),
 	medication: z.string(),
 	remarks: z.string().optional(),
-	consultation_timestamp: z.number().int(),
+	consultationTimestamp: z.number().int(),
 });
 
 export type ConsulationHistorySchema = z.infer<typeof consultationHistorySchema>;

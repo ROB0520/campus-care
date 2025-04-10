@@ -26,7 +26,7 @@ export async function hasUnreadNotifications(userId: number): Promise<boolean> {
 	const [rows] = await connection.execute<mysql.RowDataPacket[]>(
 		`SELECT COUNT(*) as count
 		 FROM AppointmentNotifications
-		 WHERE userId = ? AND is_read = FALSE`,
+		 WHERE userId = ? AND isRead = FALSE`,
 		[userId]
 	);
 	
@@ -41,11 +41,11 @@ export async function getUserNotifications(userId: number): Promise<any[]> {
 	
 	// First fetch all notifications
 	const [rows] = await connection.execute<mysql.RowDataPacket[]>(
-		`SELECT an.*, a.appointment_timestamp
+		`SELECT an.*, a.appointmentTimestamp
 		 FROM AppointmentNotifications an
 		 LEFT JOIN Appointments a ON an.appointmentId = a.id
 		 WHERE an.userId = ?
-		 ORDER BY notification_timestamp DESC
+		 ORDER BY notificationTimestamp DESC
 		 LIMIT 50`,
 		[userId]
 	);
@@ -53,8 +53,8 @@ export async function getUserNotifications(userId: number): Promise<any[]> {
 	// Then mark them as read
 	await connection.execute(
 		`UPDATE AppointmentNotifications
-		 SET is_read = TRUE
-		 WHERE userId = ? AND is_read = FALSE`,
+		 SET isRead = TRUE
+		 WHERE userId = ? AND isRead = FALSE`,
 		[userId]
 	);
 	

@@ -50,11 +50,17 @@ async function main() {
 
 		// Helper function to generate random dates (Monday-Friday, 8AM-6PM)
 		function getRandomAppointmentDate() {
-			const start = moment().add(1, 'days').startOf('day').hour(8); // Start tomorrow at 8AM
-			const end = moment().add(30, 'days').endOf('day').hour(18); // End 30 days from now at 6PM
+			const start = moment().add(1, 'days').startOf('day'); // Start tomorrow at 12AM
+			const end = moment().add(30, 'days').endOf('day'); // End 30 days from now at 11:59PM
 			let randomDate;
 			do {
 				randomDate = moment(start.valueOf() + Math.random() * (end.valueOf() - start.valueOf()));
+				// Ensure it's Monday-Friday
+				if (randomDate.isoWeekday() <= 5) {
+					// Set hours between 8AM and 6PM
+					randomDate.hour(8 + Math.floor(Math.random() * 10)); // Hours from 8 to 17 (5PM)
+					randomDate.minute(Math.floor(Math.random() * 60)); // Random minutes
+				}
 			} while (randomDate.isoWeekday() > 5); // Ensure it's Monday-Friday
 			return randomDate.valueOf() / 1000; // Convert to seconds
 		}
@@ -103,8 +109,8 @@ async function main() {
 
 			// Insert personal information
 			await connection.query(
-				`INSERT INTO PersonalInformation (userId, firstName, middleName, lastName, sex, dateOfBirth, address, contactNumber, email, height, weight, bloodType, isPWD, student_id, course_year, designation, em_first_name, em_last_name, em_address, em_phone_number, em_email)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+				`INSERT INTO PersonalInformation (userId, firstName, middleName, lastName, sex, dateOfBirth, address, contactNumber, height, weight, bloodType, isPWD, studentId, courseYearSection, designation, emFirstName, emLastName, emAddress, emPhoneNumber, emEmail)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 
 				[
 					userId,
@@ -115,7 +121,6 @@ async function main() {
 					'2000-01-01', // Default DOB
 					'123 Main St', // Default address
 					'09123456789', // Default contact number
-					`${student.lastName.toLowerCase()}@school.edu`,
 					Math.floor(Math.random() * 50) + 150, // Random height (150-200 cm)
 					Math.floor(Math.random() * 50) + 50, // Random weight (50-100 kg)
 					['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'][Math.floor(Math.random() * 8)], // Random blood type
@@ -131,29 +136,14 @@ async function main() {
 				]
 			);
 
-			// Insert admin accounts
-			const admins = [
-				{ firstName: 'Admin', lastName: 'One' },
-				{ firstName: 'Admin', lastName: 'Two' },
-				{ firstName: 'Admin', lastName: 'Three' },
-				{ firstName: 'Admin', lastName: 'Four' },
-				{ firstName: 'Admin', lastName: 'Five' }
-			];
-
-			for (const admin of admins) {
-				const [userResult] = await connection.query(
-					`INSERT INTO Users (email, password, role) VALUES (?, ?, ?)`,
-					[`${admin.firstName.toLowerCase()}.${admin.lastName.toLowerCase()}@admin.edu`, hashedPassword, '2']
-				);
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				const userId = (userResult as any).insertId;
-				
-				await connection.query(
-					`INSERT INTO ClinicProfile (userId, firstName, middleName, lastName, position) VALUES (?, ?, ?, ?, ?)`,
-					[userId, admin.firstName, null, admin.lastName, 2] // position 2 for admin
-				);
-			}
-
+			const hasCough = Math.random() > 0.5
+			const hasOtherSymptoms = Math.random() > 0.5
+			const hasChronicIllness = Math.random() > 0.5
+			const hasDiabetes = Math.random() > 0.5
+			const hasOtherConditions = Math.random() > 0.5
+			const wasHospitalized = Math.random() > 0.5
+			const hasAllergies = Math.random() > 0.5
+			const hasHereditaryDisease = Math.random() > 0.5
 			// Insert health survey - ensure column count matches value count
 			await connection.execute(
 				`INSERT INTO HealthSurvey (
@@ -183,8 +173,8 @@ async function main() {
 					userId,
 					Math.random() > 0.5, // hasFeverChills
 					Math.random() > 0.5, // hasFatigue
-					Math.random() > 0.5, // hasCough
-					Math.random() > 0.5 ? 'dry' : 'phlegm', // coughType
+					hasCough, // hasCough
+					hasCough ? (Math.random() > 0.5 ? 'dry' : 'phlegm' ) : null, // coughType
 					Math.random() > 0.5, // hasSoreThroat
 					Math.random() > 0.5, // hasShortnessOfBreath
 					Math.random() > 0.5, // hasHeadache
@@ -193,29 +183,29 @@ async function main() {
 					Math.random() > 0.5, // hasBodyAches
 					Math.random() > 0.5, // hasSkinRash
 					Math.random() > 0.5, // hasDifficultySleeping
-					Math.random() > 0.5, // hasOtherSymptoms
-					'Other symptoms description', // otherSymptoms
-					Math.random() > 0.5, // hasChronicIllness
-					Math.random() > 0.5, // hasAsthma
-					Math.random() > 0.5, // hasHypertension
-					Math.random() > 0.5, // hasDiabetes
-					Math.random() > 0.5 ? 'type1' : 'type2', // diabetesType
-					Math.random() > 0.5, // hasHeartDisease
-					Math.random() > 0.5, // hasSeizures
-					Math.random() > 0.5, // hasTuberculosis
-					Math.random() > 0.5, // hasKidneyDisease
-					Math.random() > 0.5, // hasDigestiveIssues
-					Math.random() > 0.5, // hasMigrains
-					Math.random() > 0.5, // hasCancer
-					Math.random() > 0.5, // hasOtherConditions
-					'Other conditions description', // otherConditions
-					Math.random() > 0.5, // wasHospitalized
-					'Hospitalized reason', // hospitalizedReason
+					hasOtherSymptoms, // hasOtherSymptoms
+					hasOtherSymptoms ? 'Other symptoms description' : null, // otherSymptoms
+					hasChronicIllness, // hasChronicIllness
+					hasChronicIllness ? Math.random() > 0.5 : null, // hasAsthma
+					hasChronicIllness ? Math.random() > 0.5 : null, // hasHypertension
+					hasChronicIllness ? hasDiabetes : null, // hasDiabetes
+					hasChronicIllness ? (hasDiabetes ? (Math.random() > 0.5 ? 'type1' : 'type2') : null) : null, // diabetesType
+					hasChronicIllness ? Math.random() > 0.5 : null, // hasHeartDisease
+					hasChronicIllness ? Math.random() > 0.5 : null, // hasSeizures
+					hasChronicIllness ? Math.random() > 0.5 : null, // hasTuberculosis
+					hasChronicIllness ? Math.random() > 0.5 : null, // hasKidneyDisease
+					hasChronicIllness ? Math.random() > 0.5 : null, // hasDigestiveIssues
+					hasChronicIllness ? Math.random() > 0.5 : null, // hasMigrains
+					hasChronicIllness ? Math.random() > 0.5 : null, // hasCancer
+					hasChronicIllness ? hasOtherConditions : null, // hasOtherConditions
+					hasChronicIllness ? (hasOtherConditions ? 'Other conditions description' : null) : null, // otherConditions
+					wasHospitalized, // wasHospitalized
+					wasHospitalized ? 'Hospitalized reason' : null, // hospitalizedReason
 					Math.random() > 0.5, // hasMedication
-					Math.random() > 0.5, // hasAllergies
-					'Allergy description', // allergies
-					Math.random() > 0.5, // hasHereditaryDisease
-					'Hereditary disease description', // hereditaryDisease
+					hasAllergies, // hasAllergies
+					hasAllergies ? 'Allergy description' : null, // allergies
+					hasHereditaryDisease, // hasHereditaryDisease
+					hasHereditaryDisease ? 'Hereditary disease description' : null, // hereditaryDisease
 					['yes', 'no', 'not_sure'][Math.floor(Math.random() * 3)], // hasChildhoodVaccines
 					Math.random() > 0.5, // hasVaccineAllergies
 					Math.random() > 0.5, // withCovidCommurbidity
@@ -226,7 +216,7 @@ async function main() {
 			// Insert Appointments and consultation histories
 			for (let i = 0; i < 5; i++) {
 				await connection.query(
-					`INSERT INTO Appointments (userId, appointment_timestamp, status) VALUES (?, ?, ?)`,
+					`INSERT INTO Appointments (userId, appointmentTimestamp, status) VALUES (?, ?, ?)`,
 
 					[userId, getRandomAppointmentDate(), 'pending']
 				);
@@ -244,11 +234,9 @@ async function main() {
 					const attendingPersonnelId = (clinicUsersWithRole1 as any[])[Math.floor(Math.random() *
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						(clinicUsersWithRole1 as any[]).length)].id;
-					console.log('Attending personnel ID:', attendingPersonnelId);
-
 
 					await connection.query(
-						`INSERT INTO ConsultationHistory (userId, attendingPersonnel, reason, diagnosis, medication, remarks, consultation_timestamp)
+						`INSERT INTO ConsultationHistory (userId, attendingPersonnel, reason, diagnosis, medication, remarks, consultationTimestamp)
 						VALUES (?, ?, ?, ?, ?, ?, ?)`,
 
 						[
@@ -266,6 +254,34 @@ async function main() {
 				}
 			}
 		}
+
+		// Insert admin accounts
+		const admins = [
+			{ firstName: 'Admin', lastName: 'One' },
+			{ firstName: 'Admin', lastName: 'Two' },
+			{ firstName: 'Admin', lastName: 'Three' },
+			{ firstName: 'Admin', lastName: 'Four' },
+			{ firstName: 'Admin', lastName: 'Five' }
+		];
+
+		console.log('Inserting admin accounts...');
+		
+		for (const admin of admins) {
+			console.log(admin);
+			
+			const [userResult] = await connection.query(
+				`INSERT INTO Users (email, password, role) VALUES (?, ?, ?)`,
+				[`${admin.firstName.toLowerCase()}.${admin.lastName.toLowerCase()}@admin.edu`, hashedPassword, '2']
+			);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const userId = (userResult as any).insertId;
+			
+			await connection.query(
+				`INSERT INTO AdminProfile (userId, firstName, middleName, lastName) VALUES (?, ?, ?, ?)`,
+				[userId, admin.firstName, null, admin.lastName] // position 2 for admin
+			);
+		}
+		console.log('Admin accounts inserted successfully.');
 	} catch (error) {
 		console.error('Error creating users:', error);
 	} finally {

@@ -132,7 +132,8 @@ export default function Appointment() {
 								disabled={(date) =>
 									date < new Date(new Date().setDate(new Date().getDate() - 1)) || 
 									date.getDay() === 0 || 
-									date.getDay() === 6
+									date.getDay() === 6 ||
+									(date.getTime() === new Date().setHours(0, 0, 0, 0) && new Date().getHours() >= 17 && new Date().getMinutes() >= 45)
 								}
 							/>
 							<div className="border-t pt-3">
@@ -214,11 +215,18 @@ export default function Appointment() {
 										setShowDialog(false);
 										return;
 									}
-									if (date.getTime() < new Date().getTime()) {
+									if (
+										(date.getTime() < new Date().getTime()) ||
+										(
+											date.getTime() === new Date().setHours(0, 0, 0, 0) && 
+											new Date().getHours() >= 17 && new Date().getMinutes() >= 45
+										)
+									) {
 										toast.error("Selected date and time cannot be in the past.");
 										setShowDialog(false);
 										return;
 									}
+									
 									saveAppointment(date.getTime() / 1000, Number(userId)).then(() => {
 										toast.success("Appointment booked successfully.")
 										setShowDialog(false)

@@ -17,13 +17,14 @@ import { saveData } from "../saveData";
 import { getUserId } from "../getUserId";
 import { fetchDataFromDB } from "../fetchData";
 import { useSession } from "next-auth/react";
+import { useUIState } from "@/app/student/store";
 
 const emergencyContactSchema = personalInformationSchema.pick({
-  em_first_name: true,
-  em_last_name: true,
-  em_address: true,
-  em_phone_number: true,
-  em_email: true,
+  emFirstName: true,
+  emLastName: true,
+  emAddress: true,
+  emPhoneNumber: true,
+  emEmail: true,
 });
 
 type EmergencyContactSchema = z.infer<typeof emergencyContactSchema>;
@@ -37,16 +38,17 @@ export default function EmergencyContact() {
   const step = useBasicInfoStore((state) => state.step);
   const setStep = useBasicInfoStore((state) => state.setStep);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const setUsername = useUIState((state) => state.setUsername);
 
   const form = useForm<EmergencyContactSchema>({
     resolver: zodResolver(emergencyContactSchema),
     reValidateMode: "onSubmit",
     defaultValues: data ?? {
-      em_first_name: undefined,
-      em_last_name: undefined,
-      em_address: undefined,
-      em_phone_number: undefined,
-      em_email: undefined,
+      emFirstName: undefined,
+      emLastName: undefined,
+      emAddress: undefined,
+      emPhoneNumber: undefined,
+      emEmail: undefined,
     },
   });
 
@@ -95,7 +97,10 @@ export default function EmergencyContact() {
     }
   };
 
-  const saveResponse = async () => await saveData(data);
+  const saveResponse = async () => await saveData(data).then(() => {
+    setUsername(data.firstName + " " + data.lastName);
+    setIsSubmitting(false);
+  });
 
   return (
     <div className="py-8">
@@ -139,12 +144,12 @@ export default function EmergencyContact() {
               </TabsTrigger>
             </TabsList>
             <div>
-              <div className="p-4 rounded-md shadow bg-card border border-border min-w-lg">
+              <div className="p-4 rounded-md shadow bg-card border border-border min-w-lg max-h-[70dvh] overflow-y-auto">
                 <TabsContent value="emergency-contact">
                   <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
-                      name="em_first_name"
+                      name="emFirstName"
                       render={({ field }) => (
                         <FormItem className="flex flex-col *:w-full gap-2">
                           <div className="flex flex-row gap-4 items-center">
@@ -159,7 +164,7 @@ export default function EmergencyContact() {
                     />
                     <FormField
                       control={form.control}
-                      name="em_last_name"
+                      name="emLastName"
                       render={({ field }) => (
                         <FormItem className="flex flex-col *:w-full gap-2">
                           <div className="flex flex-row gap-4 items-center">
@@ -174,7 +179,7 @@ export default function EmergencyContact() {
                     />
                     <FormField
                       control={form.control}
-                      name="em_address"
+                      name="emAddress"
                       render={({ field }) => (
                         <FormItem className="flex flex-col *:w-full gap-2">
                           <div className="flex flex-row gap-4 items-center">
@@ -189,7 +194,7 @@ export default function EmergencyContact() {
                     />
                     <FormField
                       control={form.control}
-                      name="em_phone_number"
+                      name="emPhoneNumber"
                       render={({ field }) => (
                         <FormItem className="flex flex-col *:w-full gap-2">
                           <div className="flex flex-row gap-4 items-center">
@@ -204,7 +209,7 @@ export default function EmergencyContact() {
                     />
                     <FormField
                       control={form.control}
-                      name="em_email"
+                      name="emEmail"
                       render={({ field }) => (
                         <FormItem className="flex flex-col *:w-full gap-2">
                           <div className="flex flex-row gap-4 items-center">

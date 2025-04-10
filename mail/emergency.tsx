@@ -6,28 +6,26 @@ import {
 	Hr,
 	Html,
 	Img,
-	Link,
 	Preview,
 	Section,
 	Text,
 } from '@react-email/components';
-import moment from 'moment-timezone';
 
-interface AppointmentCancelledEmailProps {
-	timestamp: number;
+interface EmergencyEmailProps {
+	studentName: string;
 }
 
 const baseUrl = process.env?.AUTH_URL || ''
 
-export default function AppointmentCancelledEmail({
-	timestamp,
-}: AppointmentCancelledEmailProps) {
+export default function EmergencyEmail({
+	studentName
+}: EmergencyEmailProps) {
 	return (
 	<Html>
 		<Head />
 		<Body style={main}>
 			<Preview>
-				Your appointment has been cancelled!
+				Emergency alert regarding {studentName}
 			</Preview>
 			<Container style={container}>
 				<Img
@@ -37,14 +35,11 @@ export default function AppointmentCancelledEmail({
 					alt="Campus Care Logo"
 				/>
 				<Heading style={heading}>
-					❌ Your appointment has been cancelled!
+					🚨 Emergency alert regarding {studentName}
 				</Heading>
 				<Section style={body}>
 					<Text style={paragraph}>
-						Your appointment scheduled for {moment.unix(timestamp).format('MMMM Do YYYY, h:mm A')} has been cancelled.
-					</Text>
-					<Text style={paragraph}>
-						If you don't recognize this appointment, please ignore this email. If you want to book a new appointment, please do so in <Link style={link} href={`${baseUrl}`}>the website</Link>.
+						We have received an emergency alert regarding <strong>{studentName}</strong>. Please take immediate action and proceed to the clinic as soon as possible.
 					</Text>
 				</Section>
 				<Text style={paragraph}>
@@ -95,10 +90,6 @@ const body = {
 const paragraph = {
 	fontSize: '16px',
 	lineHeight: '26px',
-};
-
-const link = {
-	color: '#3d63dd',
 };
 
 const hr = {

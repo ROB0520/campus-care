@@ -13,9 +13,22 @@ import { Input } from "@/components/ui/input"
 import { fetchUsers, type User } from "./fetch"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Eye } from "lucide-react"
+import { Eye, ShieldAlert } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog"
+import { sendEmergency } from "./emergency"
+import { toast } from "sonner"
+
 
 export default function StudentRecords() {
 	const [users, setUsers] = useState<User[]>([])
@@ -78,11 +91,48 @@ export default function StudentRecords() {
 							</TableRow>
 						) : users.map((user) => (
 							<TableRow key={'ur-' + user.userId} className="hover:bg-primary/15">
-								<TableCell className="font-medium">{user.student_id}</TableCell>
+								<TableCell className="font-medium">{user.studentId}</TableCell>
 								<TableCell>{user.lastName}</TableCell>
 								<TableCell>{user.firstName}</TableCell>
 								<TableCell>{user.middleName}</TableCell>
-								<TableCell>
+								<TableCell className="space-x-2">
+									<Dialog>
+										<DialogTrigger asChild>
+											<Button
+												variant="destructive"
+												size="icon"
+											>
+												<ShieldAlert />
+											</Button>
+										</DialogTrigger>
+										<DialogContent>
+											<DialogHeader>
+												<DialogTitle>Are you absolutely sure?</DialogTitle>
+												<DialogDescription>
+													This will alert the emergency contact of <strong>{user.firstName} {user.lastName}</strong>. This action cannot be undone.
+												</DialogDescription>
+												<DialogFooter>
+													<DialogClose asChild>
+														<Button
+															variant="destructive"
+															onClick={() => {
+																sendEmergency(user.userId as unknown as string).then(() => {
+																	toast.success("Emergency contact has been alerted")
+																}).catch(() => {
+																	toast.error("Failed to alert emergency contact")
+																})
+															}}
+														>
+															Yes, I&apos;m sure
+														</Button>
+													</DialogClose>
+													<DialogClose asChild>
+														<Button variant="outline">Cancel</Button>
+													</DialogClose>
+												</DialogFooter>
+											</DialogHeader>
+										</DialogContent>
+									</Dialog>
 									<Button variant="default" size="icon" asChild>
 										<Link href={`/clinic/student-records/${user.userId}`}>
 											<Eye />
@@ -95,5 +145,5 @@ export default function StudentRecords() {
 				</TableBody>
 			</Table>
 		</div>
-	</div>
+	</div >
 }

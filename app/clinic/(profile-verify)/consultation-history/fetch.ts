@@ -10,10 +10,10 @@ export type ConsultHistory = {
 	diagnosis: string
 	medication: string
 	remarks: string | null
-	consultation_timestamp: number
+	consultationTimestamp: number
 	fullName: string
-	student_id: string
-	course_year: string | null
+	studentId: string
+	courseYearSection: string | null
 	attendingPersonnelName: string
 	attendingPersonnelPosition: number | null
 }
@@ -29,17 +29,17 @@ export async function fetchConsultHistory(searchQuery?: string): Promise<Consult
 			ConsultationHistory.diagnosis,
 			ConsultationHistory.medication,
 			ConsultationHistory.remarks,
-			ConsultationHistory.consultation_timestamp,
+			ConsultationHistory.consultationTimestamp,
 			CONCAT_WS('', pi.lastName, ', ', pi.firstName, ' ', pi.middleName) AS fullName,
-			pi.student_id,
-			pi.course_year,
+			pi.studentId,
+			pi.courseYearSection,
 			CONCAT_WS(' ', ci.firstName, ci.lastName) AS attendingPersonnelName,
 			ci.position AS attendingPersonnelPosition
 		FROM ConsultationHistory
 		LEFT JOIN PersonalInformation pi ON ConsultationHistory.userId = pi.userId
 		LEFT JOIN ClinicProfile ci ON ConsultationHistory.attendingPersonnel = ci.userId
-		${searchQuery ? `WHERE (pi.lastName LIKE ? OR pi.firstName LIKE ? OR pi.middleName LIKE ? OR pi.student_id LIKE ?)` : ""}
-		ORDER BY ConsultationHistory.consultation_timestamp DESC;`,
+		${searchQuery ? `WHERE (pi.lastName LIKE ? OR pi.firstName LIKE ? OR pi.middleName LIKE ? OR pi.studentId LIKE ?)` : ""}
+		ORDER BY ConsultationHistory.consultationTimestamp DESC;`,
 		searchQuery ? [`%${searchQuery}%`, `%${searchQuery}%`, `%${searchQuery}%`, `%${searchQuery}%`] : []
 	)
 
@@ -48,15 +48,15 @@ export async function fetchConsultHistory(searchQuery?: string): Promise<Consult
 	return rows as ConsultHistory[]
 }
 
-export async function fetchStudents(): Promise<{ userId: number; student_id: string; fullName: string }[]> {
+export async function fetchStudents(): Promise<{ userId: number; studentId: string; fullName: string }[]> {
 	const connection = await createConnection()
 	const [rows] = await connection.execute(
-		`SELECT userId, student_id, CONCAT_WS('', lastName, ', ', firstName, ' ', middleName) AS fullName FROM PersonalInformation;`
+		`SELECT userId, studentId, CONCAT_WS('', lastName, ', ', firstName, ' ', middleName) AS fullName FROM PersonalInformation;`
 	)
 
 	await connection.end()
 
-	return rows as { userId: number; student_id: string; fullName: string }[]
+	return rows as { userId: number; studentId: string; fullName: string }[]
 }
 
 export async function fetchPersonnel(): Promise<{ userId: number; fullName: string; position: string }[]> {

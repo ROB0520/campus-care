@@ -48,10 +48,15 @@ export default async function StudentInfo({
 		<div className="flex flex-row items-center gap-3">
 			<CircleUserRound className="size-15" strokeWidth={1.25} />
 			<div className="flex flex-col gap-1 min-w-80">
-				<h1 className="text-2xl font-bold">{user.firstName} {user.middleName && user.middleName + ' '}{user.lastName}</h1>
+				<div className="flex flex-row gap-4 items-center">
+					<h1 className="text-2xl font-bold">{user.firstName} {user.middleName && user.middleName + ' '}{user.lastName}</h1>
+					{
+						user.isLocked ? <Badge variant="destructive" className="text-xs">Locked</Badge> : null
+					}
+				</div>
 				<div className="flex flex-row gap-2 justify-between">
-					<p className="text-sm text-muted-foreground">{user.student_id}</p>
-					<p className="text-sm text-muted-foreground">{user.course_year}</p>
+					<p className="text-sm text-muted-foreground">{user.studentId}</p>
+					<p className="text-sm text-muted-foreground">{user.courseYearSection}</p>
 				</div>
 				<p className="text-sm text-muted-foreground">{user.designation}</p>
 			</div>
@@ -122,23 +127,23 @@ export default async function StudentInfo({
 					<div className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-1 w-full">
 						<DataRow
 							label="First Name"
-							value={user.em_first_name}
+							value={user.emFirstName}
 						/>
 						<DataRow
 							label="Last Name"
-							value={user.em_last_name}
+							value={user.emLastName}
 						/>
 						<DataRow
 							label="Address"
-							value={user.em_address}
+							value={user.emAddress}
 						/>
 						<DataRow
 							label="Contact Number"
-							value={user.em_phone_number}
+							value={user.emPhoneNumber}
 						/>
 						<DataRow
 							label="Email Address"
-							value={<Link className="text-primary underline underline-offset-2 w-fit" href={'mailto:' + user.em_email}>{user.em_email}</Link>}
+							value={<Link className="text-primary underline underline-offset-2 w-fit" href={'mailto:' + user.emEmail}>{user.emEmail}</Link>}
 						/>
 					</div>
 				</div>
@@ -266,7 +271,7 @@ export default async function StudentInfo({
 							<TableRow key={appointment.appointmentId} className="hover:bg-primary/10">
 								<TableCell className="text-left">
 									{
-										moment.unix(appointment.appointment_timestamp as unknown as number).tz('Asia/Manila').format('MMMM D, YYYY h:mm A')
+										moment.unix(appointment.appointmentTimestamp as unknown as number).tz('Asia/Manila').format('MMMM DD, YYYY @ hh:mm A')
 									}
 								</TableCell>
 								<TableCell className="text-left">

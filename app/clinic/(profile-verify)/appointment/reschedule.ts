@@ -13,7 +13,7 @@ export async function rescheduleAppointment(appointmentId: number, oldDate: numb
 
 	// Update the appointment date in the database
 	await connection.query(
-		`UPDATE Appointments SET appointment_timestamp = ? WHERE id = ?`,
+		`UPDATE Appointments SET appointmentTimestamp = ? WHERE id = ?`,
 		[newDate, appointmentId]
 	)
 

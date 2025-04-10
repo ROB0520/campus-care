@@ -45,6 +45,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { toast } from "sonner"
 import { saveData } from "./saveData"
 import { useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
 
 
 export default function ConsultationHistory() {
@@ -52,7 +53,7 @@ export default function ConsultationHistory() {
 	const router = useRouter()
 	const [consultRecords, setConsultRecords] = useState<ConsultHistory[]>([])
 	const [loading, setLoading] = useState(true)
-	const [students, setStudents] = useState<{ userId: number; student_id: string; fullName: string }[]>([])
+	const [students, setStudents] = useState<{ userId: number; studentId: string; fullName: string }[]>([])
 	const [personnels, setPersonnel] = useState<{ userId: number; fullName: string }[]>([])
 	const [openStudent, setOpenStudent] = useState(false)
 	const [openPersonnel, setOpenPersonnel] = useState(false)
@@ -121,7 +122,7 @@ export default function ConsultationHistory() {
 				diagnosis: diagnosisValue,
 				medication: medicationValue,
 				remarks: remarksValue,
-				consultation_timestamp: Math.floor(dateValue.getTime()),
+				consultationTimestamp: Math.floor(dateValue.getTime()),
 			}
 			toast.success("Consultation record added successfully.")
 			setStudentValue("")
@@ -189,7 +190,7 @@ export default function ConsultationHistory() {
 												<CommandGroup>
 													{students.map((student, i) => (
 														<CommandItem
-															key={'stud-' + student.student_id + '-' + i}
+															key={'stud-' + student.studentId + '-' + i}
 															value={student.fullName}
 															onSelect={() => {
 																setStudentValue(student.fullName === studentValue ? "" : student.fullName)
@@ -430,10 +431,17 @@ export default function ConsultationHistory() {
 							</TableRow>
 						) : consultRecords.map((record) => (
 							<TableRow key={record.id} className="hover:bg-primary/15">
-								<TableCell className="text-left">{moment.unix(record.consultation_timestamp).tz("Asia/Manila").format('MMMM DD, YYYY @ hh:mm A')}</TableCell>
-								<TableCell className="text-left">{record.student_id}</TableCell>
-								<TableCell className="text-left">{record.fullName}</TableCell>
-								<TableCell className="text-left">{record.course_year}</TableCell>
+								<TableCell className="text-left">{moment.unix(record.consultationTimestamp).tz("Asia/Manila").format('MMMM DD, YYYY @ hh:mm A')}</TableCell>
+								<TableCell className="text-left">{record.studentId}</TableCell>
+								<TableCell className="text-left">
+									<Link
+										href={`/clinic/student-records/${record.userId}`}
+										className="text-blue-500 underline underline-offset-2"
+									>
+										{record.fullName}
+									</Link>
+								</TableCell>
+								<TableCell className="text-left">{record.courseYearSection}</TableCell>
 								<TableCell className="text-left">
 									{record.attendingPersonnelPosition === 0 ?
 										'Dr.' : (

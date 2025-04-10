@@ -12,7 +12,7 @@ export async function resetPassword(userId: string, newPassword: string, token: 
 	const connection = await createConnection()
 
 	const [userCheck] = await connection.query<RowDataPacket[]>(
-		"SELECT * FROM PasswordReset WHERE userId = ? AND reset_token = ?",
+		"SELECT * FROM PasswordReset WHERE userId = ? AND resetToken = ?",
 		[userId, token]
 	)
 	if (userCheck.length === 0) {
@@ -20,7 +20,7 @@ export async function resetPassword(userId: string, newPassword: string, token: 
 		throw new Error("Invalid or expired token")
 	}
 
-	const tokenExpiry = new Date(userCheck[0].token_expiry)
+	const tokenExpiry = new Date(userCheck[0].tokenExpiry)
 	if (tokenExpiry < new Date()) {
 		await connection.end()
 		throw new Error("Invalid or expired token")
@@ -60,7 +60,7 @@ export async function sendResetEmail(email: string) {
 	const resetLink = `${process.env.AUTH_URL}/forgot-password/${resetToken}/${userId}`
 
 	await connection.query(
-		"INSERT INTO PasswordReset (userId, reset_token, token_expiry) VALUES (?, ?, ?)",
+		"INSERT INTO PasswordReset (userId, resetToken, tokenExpiry) VALUES (?, ?, ?)",
 		[userId, resetToken, new Date(Date.now() + 3600000)] // Token expires in 1 hour
 	)
 	const emailHtml = await render(React.createElement(ResetTokenEmail, { resetLink }));
@@ -85,7 +85,7 @@ export async function verifyResetToken(token: string, userId: string) {
 	const connection = await createConnection()
 
 	const [tokenCheck] = await connection.query<RowDataPacket[]>(
-		"SELECT * FROM PasswordReset WHERE reset_token = ? AND userId = ?",
+		"SELECT * FROM PasswordReset WHERE resetToken = ? AND userId = ?",
 		[token, userId]
 	)
 	if (tokenCheck.length === 0) {
@@ -93,7 +93,7 @@ export async function verifyResetToken(token: string, userId: string) {
 		throw new Error("Invalid or expired token")
 	}
 
-	const tokenExpiry = new Date(tokenCheck[0].token_expiry)
+	const tokenExpiry = new Date(tokenCheck[0].tokenExpiry)
 	if (tokenExpiry < new Date()) {
 		await connection.end()
 		console.log('Invalid token check:', tokenCheck);

@@ -15,8 +15,8 @@ import { useSession } from "next-auth/react";
 import { fetchDataFromDB } from "../fetchData";
 
 const schoolInfoSchema = personalInformationSchema.pick({
-  student_id: true,
-  course_year: true,
+  studentId: true,
+  courseYearSection: true,
   designation: true,
 });
 
@@ -35,8 +35,8 @@ export default function SchoolInformation() {
     resolver: zodResolver(schoolInfoSchema),
     reValidateMode: "onSubmit",
     defaultValues: data ?? {
-      student_id: undefined,
-      course_year: undefined,
+      studentId: undefined,
+      courseYearSection: undefined,
       designation: undefined,
     },
   });
@@ -128,12 +128,12 @@ export default function SchoolInformation() {
               </TabsTrigger>
             </TabsList>
             <div>
-              <div className="p-4 rounded-md shadow bg-card border border-border min-w-lg">
+              <div className="p-4 rounded-md shadow bg-card border border-border min-w-lg max-h-[70dvh] overflow-y-auto">
                 <TabsContent value="school-information">
                   <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
-                      name="student_id"
+                      name="studentId"
                       render={({ field }) => (
                         <FormItem className="flex flex-col *:w-full gap-2">
                           <div className="flex flex-row gap-4 items-center">
@@ -148,7 +148,7 @@ export default function SchoolInformation() {
                     />
                     <FormField
                       control={form.control}
-                      name="course_year"
+                      name="courseYearSection"
                       render={({ field }) => (
                         <FormItem className="flex flex-col *:w-full gap-2">
                           <div className="flex flex-row gap-4 items-center">

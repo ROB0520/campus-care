@@ -24,7 +24,7 @@ import {
 	HoverCardContent,
 	HoverCardTrigger,
 } from "@/components/ui/hover-card"
-import { CalendarCheck2, CalendarSync, CalendarIcon, CalendarX2, CircleCheck, ClockIcon } from "lucide-react"
+import { CalendarCheck2, CalendarSync, CalendarIcon, CalendarX2, CircleCheck, ClockIcon, BellRing } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
@@ -35,6 +35,7 @@ import { setStatus } from "./status"
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Badge } from "@/components/ui/badge"
 import { sendAppointmentNotification } from "./notify"
+import Link from "next/link"
 
 
 
@@ -82,6 +83,29 @@ export default function AppointmentPage() {
 			</HoverCardTrigger>
 			<HoverCardContent align='end' className="p-2 w-fit" sideOffset={10}>
 				Approve Appointment
+			</HoverCardContent>
+		</HoverCard>
+	}
+
+	function ReminderButton({ appointmentId }: { appointmentId: number }) {
+		const handleComplete = async () => {
+			toast.success("Appointment Reminder Sent")
+			await sendAppointmentNotification(appointmentId, 'reminder')
+		}
+
+		return <HoverCard>
+			<HoverCardTrigger>
+				<Button
+					variant="default"
+					size='icon'
+					className="bg-amber-700 text-white hover:bg-amber-700/90"
+					onClick={handleComplete}
+				>
+					<BellRing />
+				</Button>
+			</HoverCardTrigger>
+			<HoverCardContent align='end' className="p-2 w-fit" sideOffset={10}>
+				Complete Appointment
 			</HoverCardContent>
 		</HoverCard>
 	}
@@ -369,11 +393,19 @@ export default function AppointmentPage() {
 									appointment.status === 'completed' && 'bg-blue-50'
 								)
 							}>
-								<TableCell className="font-medium">{appointment.student_id}</TableCell>
-								<TableCell>{appointment.lastName}, {appointment.firstName} {appointment.middleName}</TableCell>
+								<TableCell className="font-medium">{appointment.studentId}</TableCell>
+								<TableCell>
+									<Link
+										href={`/clinic/student-records/${appointment.userId}`}
+										className="text-blue-500 underline underline-offset-2"
+									>
+										{appointment.lastName}, {appointment.firstName}{appointment.middleName && ` ${appointment.middleName}`}
+									</Link>
+
+								</TableCell>
 								<TableCell>{appointment.contactNumber}</TableCell>
 								<TableCell className="text-right">
-									{moment.unix(appointment.appointment_timestamp).local().format('MMMM DD, YYYY @ hh:mm A')}
+									{moment.unix(appointment.appointmentTimestamp).local().format('MMMM DD, YYYY @ hh:mm A')}
 								</TableCell>
 								<TableCell className="\text-center">
 									<Badge variant='default' className={cn(
@@ -391,13 +423,14 @@ export default function AppointmentPage() {
 											<>
 												<ApproveButton appointmentId={appointment.id} />
 												<CancelButton appointmentId={appointment.id} />
-												<RescheduleButton appointmentId={appointment.id} originalTimestamp={appointment.appointment_timestamp} />
+												<RescheduleButton appointmentId={appointment.id} originalTimestamp={appointment.appointmentTimestamp} />
 											</>
 										) : (
 											appointment.status === 'approved' ? (<>
+												<ReminderButton appointmentId={appointment.id} />
 												<CompleteButton appointmentId={appointment.id} />
 												<CancelButton appointmentId={appointment.id} />
-												<RescheduleButton appointmentId={appointment.id} originalTimestamp={appointment.appointment_timestamp} />
+												<RescheduleButton appointmentId={appointment.id} originalTimestamp={appointment.appointmentTimestamp} />
 											</>) : null
 										)
 									}

@@ -43,7 +43,7 @@ export default function AppointmentCompletedEmail({
 						Your appointment scheduled for {moment.unix(timestamp).format('MMMM Do YYYY, h:mm A')} has been completed.
 					</Text>
 					<Text style={paragraph}>
-						If you don&nbsp;t recognize this appointment, please ignore this email.
+						If you don't recognize this appointment, please ignore this email.
 					</Text>
 				</Section>
 				<Text style={paragraph}>

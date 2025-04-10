@@ -10,7 +10,7 @@ export async function saveAppointment(date: number, userId: number) {
 	const [rows] = await connection.query<mysql.RowDataPacket[]>(`
 		SELECT COUNT(*) AS count
 		FROM Appointments
-		WHERE DATE(FROM_UNIXTIME(appointment_timestamp)) = DATE(FROM_UNIXTIME(?)) AND
+		WHERE DATE(FROM_UNIXTIME(appointmentTimestamp)) = DATE(FROM_UNIXTIME(?)) AND
 		userId = ?
 	`, [date, userId])	
 
@@ -19,7 +19,7 @@ export async function saveAppointment(date: number, userId: number) {
 	}
 
 	// Insert the appointment data into the database
-	await connection.query(`INSERT INTO Appointments (userId, appointment_timestamp) VALUES (?, ?)`, [userId, date])
+	await connection.query(`INSERT INTO Appointments (userId, appointmentTimestamp) VALUES (?, ?)`, [userId, date])
 
 	// Close the database connection
 	await connection.end()

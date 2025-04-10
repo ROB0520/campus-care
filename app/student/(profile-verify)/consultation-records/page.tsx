@@ -68,10 +68,10 @@ export default function VisitHistory() {
 							</>
 								: <>
 									<p className="text-sm text-muted-foreground">
-										{user?.student_id}
+										{user?.studentId}
 									</p>
 									<p className="text-sm text-muted-foreground">
-										{user?.course_year}
+										{user?.courseYearSection}
 									</p>
 								</>
 
@@ -111,15 +111,15 @@ export default function VisitHistory() {
 							</TableRow>
 						) : consultRecords.map((record) => (
 							<TableRow key={record.id} className="hover:bg-primary/15">
-								<TableCell className="text-left">{moment.unix(record.consultation_timestamp).tz("Asia/Manila").format('MMMM DD, YYYY @ hh:mm A')}</TableCell>
+								<TableCell className="text-left">{moment.unix(record.consultationTimestamp).tz("Asia/Manila").format('MMMM DD, YYYY @ hh:mm A')}</TableCell>
 								<TableCell className="text-left">
-									{record.attendingPersonnelPosition ? (
-										record.attendingPersonnelPosition === 0 ?
+									{
+										record.attendingPersonnelPosition == 0 ?
 											'Dr.' : (
-												record.attendingPersonnelPosition === 1 ?
+												record.attendingPersonnelPosition == 1 ?
 													'Nurse' : null
 											)
-									) : null}
+									}
 									&nbsp;
 									{record.attendingPersonnelName}
 								</TableCell>

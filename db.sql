@@ -3,10 +3,9 @@ CREATE TABLE Users (
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	email VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
-	role INT NOT NULL DEFAULT 0, -- 0: Patient, 1: Doctor
+	role INT NOT NULL DEFAULT 0, -- 0: Patient, 1: Clinic, 2: Admin
 	isLocked BOOLEAN NOT NULL DEFAULT FALSE,
-	auth_token VARCHAR(255),
-	token_expiry TIMESTAMP
+	tokenExpiry TIMESTAMP
 );
 
 -- Create table for personal information
@@ -21,21 +20,20 @@ CREATE TABLE PersonalInformation (
 	dateOfBirth DATE NOT NULL,
 	address TEXT NOT NULL,
 	contactNumber VARCHAR(50) NOT NULL,
-	email VARCHAR(255) NOT NULL UNIQUE,
 	height DECIMAL(5, 2) NOT NULL CHECK (height > 0),
 	weight DECIMAL(5, 2) NOT NULL CHECK (weight > 0),
 	bloodType ENUM('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'),
 	isPWD BOOLEAN,
 	pwdCategory ENUM('physical', 'visual', 'hearing', 'mental', 'intellectual'),
 	pwdID VARCHAR(255),
-	student_id VARCHAR(255) NOT NULL UNIQUE,
-	course_year VARCHAR(255),
+	studentId VARCHAR(255) NOT NULL UNIQUE,
+	courseYearSection VARCHAR(255),
 	designation VARCHAR(255),
-	em_first_name VARCHAR(255) NOT NULL,
-	em_last_name VARCHAR(255) NOT NULL,
-	em_address TEXT NOT NULL,
-	em_phone_number VARCHAR(50) NOT NULL,
-	em_email VARCHAR(255) NOT NULL
+	emFirstName VARCHAR(255) NOT NULL,
+	emLastName VARCHAR(255) NOT NULL,
+	emAddress TEXT NOT NULL,
+	emPhoneNumber VARCHAR(50) NOT NULL,
+	emEmail VARCHAR(255) NOT NULL
 );
 
 -- Create table for health survey
@@ -58,18 +56,18 @@ CREATE TABLE HealthSurvey (
 	hasOtherSymptoms BOOLEAN NOT NULL,
 	otherSymptoms TEXT,
 	hasChronicIllness BOOLEAN NOT NULL,
-	hasAsthma BOOLEAN NOT NULL,
-	hasHypertension BOOLEAN NOT NULL,
-	hasDiabetes BOOLEAN NOT NULL,
+	hasAsthma BOOLEAN,
+	hasHypertension BOOLEAN,
+	hasDiabetes BOOLEAN,
 	diabetesType ENUM('type1', 'type2'),
-	hasHeartDisease BOOLEAN NOT NULL,
-	hasSeizures BOOLEAN NOT NULL,
-	hasTuberculosis BOOLEAN NOT NULL,
-	hasKidneyDisease BOOLEAN NOT NULL,
-	hasDigestiveIssues BOOLEAN NOT NULL,
-	hasMigrains BOOLEAN NOT NULL,
-	hasCancer BOOLEAN NOT NULL,
-	hasOtherConditions BOOLEAN NOT NULL,
+	hasHeartDisease BOOLEAN,
+	hasSeizures BOOLEAN,
+	hasTuberculosis BOOLEAN,
+	hasKidneyDisease BOOLEAN,
+	hasDigestiveIssues BOOLEAN,
+	hasMigrains BOOLEAN,
+	hasCancer BOOLEAN,
+	hasOtherConditions BOOLEAN,
 	otherConditions TEXT,
 	wasHospitalized BOOLEAN NOT NULL,
 	hospitalizedReason TEXT,
@@ -89,7 +87,7 @@ CREATE TABLE Appointments (
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	userId INT NOT NULL,
 	FOREIGN KEY (userId) REFERENCES Users(id),
-	appointment_timestamp BIGINT NOT NULL,
+	appointmentTimestamp BIGINT NOT NULL,
 	status ENUM('pending', 'approved', 'cancelled', 'completed') NOT NULL DEFAULT 'pending'
 );
 
@@ -104,7 +102,7 @@ CREATE TABLE ConsultationHistory (
 	diagnosis TEXT NOT NULL,
 	medication TEXT NOT NULL,
 	remarks TEXT,
-	consultation_timestamp BIGINT NOT NULL
+	consultationTimestamp BIGINT NOT NULL
 );
 
 -- Create table for clinic profile information
@@ -123,8 +121,8 @@ CREATE TABLE PasswordReset (
 	id SERIAL PRIMARY KEY,
 	userId INT NOT NULL,
 	FOREIGN KEY (userId) REFERENCES Users(id),
-	reset_token VARCHAR(255) NOT NULL,
-	token_expiry TIMESTAMP NOT NULL
+	resetToken VARCHAR(255) NOT NULL,
+	tokenExpiry TIMESTAMP NOT NULL
 );
 
 -- Create table for appoinment notifications
@@ -135,8 +133,8 @@ CREATE TABLE AppointmentNotifications (
 	type ENUM('reminder', 'approved', 'rescheduled', 'cancelled', 'completed') NOT NULL,
 	appointmentId INT NOT NULL,
 	FOREIGN KEY (appointmentId) REFERENCES Appointments(id),
-	notification_timestamp INT NOT NULL,
-	is_read BOOLEAN NOT NULL DEFAULT FALSE
+	notificationTimestamp BIGINT NOT NULL,
+	isRead BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- Create table for admin profile information

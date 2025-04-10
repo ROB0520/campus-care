@@ -10,7 +10,6 @@ export const personalInformationSchema = z.object({
 	}),
 	address: z.string().min(1, "Address is required"),
 	contactNumber: z.string().min(1, "Contact number is required"),
-	email: z.string().email("Invalid email address"),
 	height: z.number({
 		required_error: "Height is required",
 	}).min(1, "Height is required"),
@@ -39,15 +38,15 @@ export const personalInformationSchema = z.object({
 	]).optional(),
 	pwdID: z.string().optional(),
 	
-	student_id: z.string(),
-	course_year: z.string(),
+	studentId: z.string(),
+	courseYearSection: z.string(),
 	designation: z.string(),
 
-	em_first_name: z.string().min(1, "First name is required"),
-	em_last_name: z.string().min(1, "Last name is required"),
-	em_address: z.string().min(1, "Address is required"),
-	em_phone_number: z.string().min(1, "Phone number is required"),
-	em_email: z.string().email("Invalid email address"),
+	emFirstName: z.string().min(1, "First name is required"),
+	emLastName: z.string().min(1, "Last name is required"),
+	emAddress: z.string().min(1, "Address is required"),
+	emPhoneNumber: z.string().min(1, "Phone number is required"),
+	emEmail: z.string().email("Invalid email address"),
 });
 
 export type PersonalInformationSchema = z.infer<typeof personalInformationSchema>;

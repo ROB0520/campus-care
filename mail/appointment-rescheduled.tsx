@@ -45,7 +45,7 @@ export default function AppointmentRescheduledEmail({
 						Your appointment from {moment.unix(oldTimestamp).format('MMMM Do YYYY, h:mm A')} has been moved to {moment.unix(newTimestamp).format('MMMM Do YYYY, h:mm A')}.
 					</Text>
 					<Text style={paragraph}>
-						If you don&nbsp;t recognize this appointment, please ignore this email.
+						If you don't recognize this appointment, please ignore this email.
 					</Text>
 				</Section>
 				<Text style={paragraph}>

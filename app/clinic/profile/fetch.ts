@@ -6,9 +6,10 @@ import mysql from "mysql2/promise"
 export async function fetchClinicProfile(userId: string) {
 	const connection = await createConnection()
 	const [rows] = await connection.execute<mysql.RowDataPacket[]>(`
-		SELECT * 
-		FROM ClinicProfile 
-		WHERE userId = ?
+		SELECT c.*, u.email 
+		FROM ClinicProfile c
+		JOIN Users u ON c.userId = u.id
+		WHERE c.userId = ?
 		`, [userId])
 	
 	await connection.end()

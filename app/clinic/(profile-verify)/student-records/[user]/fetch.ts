@@ -18,6 +18,7 @@ const UserSchema = userFormSchema
 				appointmentId: z.number().optional(),
 			})
 		).optional(),
+		isLocked: z.boolean(),
 	});
 
 export type UserSchema = z.infer<typeof UserSchema>;
@@ -27,6 +28,8 @@ export async function fetchUser(userId: number): Promise<UserSchema & { hasPerso
 	
 	const [userRows] = await connection.execute<mysql.RowDataPacket[]>(
 		`SELECT 
+			u.email,
+			u.isLocked,
 			pi.firstName,
 			pi.middleName,
 			pi.lastName,
@@ -34,21 +37,20 @@ export async function fetchUser(userId: number): Promise<UserSchema & { hasPerso
 			pi.dateOfBirth,
 			pi.address,
 			pi.contactNumber,
-			pi.email,
 			pi.height,
 			pi.weight,
 			pi.bloodType,
 			pi.isPWD,
 			pi.pwdCategory,
 			pi.pwdID,
-			pi.student_id,
-			pi.course_year,
+			pi.studentId,
+			pi.courseYearSection,
 			pi.designation,
-			pi.em_first_name,
-			pi.em_last_name,
-			pi.em_address,
-			pi.em_phone_number,
-			pi.em_email,
+			pi.emFirstName,
+			pi.emLastName,
+			pi.emAddress,
+			pi.emPhoneNumber,
+			pi.emEmail,
 			hs.hasFeverChills,
 			hs.hasFatigue,
 			hs.hasCough,
@@ -98,11 +100,11 @@ export async function fetchUser(userId: number): Promise<UserSchema & { hasPerso
 	const [appointmentRows] = await connection.execute<mysql.RowDataPacket[]>(
 		`SELECT 
 			id AS appointmentId,
-			appointment_timestamp,
+			appointmentTimestamp,
 			status
 		FROM Appointments
 		WHERE userId = ?
-		ORDER BY appointment_timestamp DESC;`,
+		ORDER BY appointmentTimestamp DESC;`,
 		[userId]
 	);
 

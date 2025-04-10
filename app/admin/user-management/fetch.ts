@@ -5,7 +5,7 @@ import { createConnection } from "@/lib/db"
 
 export type User = {
 	userId: number
-	student_id: string
+	studentId: string
 	firstName: string
 	middleName: string | null
 	lastName: string
@@ -37,10 +37,16 @@ export async function fetchUsers(searchQuery?: string): Promise<User[]> {
 	)
 
 	const [emailRows]: any[] = await connection.query(
-		`SELECT id, isLocked, email FROM Users `
+		`SELECT id, isLocked, email, role FROM Users `
 		+ (searchQuery ? ` WHERE (email LIKE ?);` : ";"),
 		searchQuery ? [`%${searchQuery}%`] : []
 	)
+
+	const filteredEmailRows = emailRows.filter((emailRow: any) => {
+		return !studentRows.some((student: any) => student.userId === emailRow.id) &&
+			!clinicRows.some((clinic: any) => clinic.userId === emailRow.id) &&
+			!adminRows.some((admin: any) => admin.userId === emailRow.id);
+	});
 
 	const userRows = [
 		...studentRows.map((row: any) => ({
@@ -61,6 +67,14 @@ export async function fetchUsers(searchQuery?: string): Promise<User[]> {
 			email: emailRows.find((e: any) => e.id === row.userId)?.email,
 			isLocked: emailRows.find((e: any) => e.id === row.userId)?.isLocked ?? false,
 		})),
+		...filteredEmailRows.map((row: any) => ({
+			userId: row.id,
+			role: row.role,
+			email: row.email,
+			isLocked: row.isLocked ?? false,
+			firstName: null,
+			lastName: null,
+		}))
 	]
 	.sort((a, b) => {
 		return a.userId - b.userId;
