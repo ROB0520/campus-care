@@ -207,7 +207,7 @@ export default function AppointmentPage() {
 
 		const submitUpdate = async () => {
 			if (!date) return;
-			const timestamp = Math.floor(date.getTime());
+			const timestamp = Math.floor(date.getTime() / 1000);
 
 			await rescheduleAppointment(appointmentId, originalTimestamp, timestamp)
 			toast.success("Appointment Rescheduled")
