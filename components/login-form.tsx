@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
 
 export function LoginForm({
   className,
@@ -39,7 +40,7 @@ export function LoginForm({
       params.delete('error')
       router.replace(`/login?${params.toString()}`)
     }
-  }, [router, searchParams])
+  }, [])
 
   return (
     <form
@@ -59,8 +60,14 @@ export function LoginForm({
           <Input id="credentials-email" name="email" type="email" placeholder="john.doe@example.com" required />
         </div>
         <div className="grid gap-3">
-          <div className="flex items-center">
+          <div className="flex items-center justify-between w-full">
             <Label htmlFor="credentials-password">Password</Label>
+            <Link
+              className="text-sm leading-none font-medium underline underline-offset-2 text-primary"
+              href="/forgot-password"
+            >
+              Forgot password?
+            </Link>
           </div>
           <div className="relative">
             <Input
@@ -86,18 +93,11 @@ export function LoginForm({
               )}
             </button>
           </div>
-          {/* <Input id="credentials-password" name="password" type="password" required /> */}
         </div>
         <Button type="submit" className="w-full">
           Login
         </Button>
       </div>
-      {/* <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
-          Sign up
-        </a>
-      </div> */}
     </form>
   )
 }

@@ -1,15 +1,15 @@
 'use client'
 
 import { z } from "zod"
-import { clinicProfileSchema } from "@/lib/schema/clinic-profile"
+import { adminProfileSchema } from "@/lib/schema/admin-profile"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useEffect } from "react"
 import { useSession } from "next-auth/react"
-import { fetchClinicProfile } from "./fetch"
-import { saveClinicProfile } from "./saveData"
+import { fetchAdminProfile } from "./fetch"
+import { saveAdminProfile } from "./saveData"
 import { toast } from "sonner"
 import {
 	Form,
@@ -23,8 +23,8 @@ import {
 export default function Profile() {
 	const session = useSession().data
 
-	const form = useForm<z.infer<typeof clinicProfileSchema>>({
-		resolver: zodResolver(clinicProfileSchema),
+	const form = useForm<z.infer<typeof adminProfileSchema>>({
+		resolver: zodResolver(adminProfileSchema),
 		defaultValues: {
 			firstName: "",
 			lastName: "",
@@ -35,13 +35,13 @@ export default function Profile() {
 	useEffect(() => {
 		if (!session) return;
 		if (session.user?.id) {
-			fetchClinicProfile(session.user.id).then((data) => {
+			fetchAdminProfile(session.user.id).then((data) => {
 				if (data) {
 					// Ensure data is a plain object
 					const plainData = JSON.parse(JSON.stringify(data));
 					for (const key in plainData) {
 						if (key in form.getValues() && plainData[key] !== null) {
-							form.setValue(key as keyof z.infer<typeof clinicProfileSchema>, plainData[key]);
+							form.setValue(key as keyof z.infer<typeof adminProfileSchema>, plainData[key]);
 						}
 					}
 				}
@@ -54,7 +54,7 @@ export default function Profile() {
 		if (!session || !session.user) return
 		
 		try {
-			await saveClinicProfile(data, Number(session.user.id))
+			await saveAdminProfile(data, Number(session.user.id))
 			toast.success("Profile updated successfully")
 		} catch (error) {
 			console.error("Error saving data", error)

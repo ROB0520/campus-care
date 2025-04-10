@@ -59,40 +59,41 @@ export default function StudentRecords() {
 			/>
 		</div>
 		<Separator />
-		<Table className="bg-secondary">
-			<TableHeader className="sticky top-0 z-10 bg-secondary shadow">
-				<TableRow>
-					<TableHead className="w-2/12">Student ID</TableHead>
-					<TableHead className="w-2/12">Last Name</TableHead>
-					<TableHead className="w-5/12">First Name</TableHead>
-					<TableHead className="w-2/12">Middle Name</TableHead>
-					<TableHead className="w-1/12 text-right"></TableHead>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{
-					loading ? (
-						<TableRow>
-							<TableCell colSpan={5} className="text-center">Loading...</TableCell>
-						</TableRow>
-					) : users.map((user) => (
-						<TableRow key={'ur-' + user.userId} className="hover:bg-primary/15">
-							<TableCell className="font-medium">{user.student_id}</TableCell>
-							<TableCell>{user.lastName}</TableCell>
-							<TableCell>{user.firstName}</TableCell>
-							<TableCell>{user.middleName}</TableCell>
-							<TableCell>
-								<Button variant="default" size="icon" asChild>
-									<Link href={`/clinic/student-records/${user.userId}`}>
-										<Eye />
-									</Link>
-								</Button>
-							</TableCell>
-						</TableRow>
-					))
-				}
-			</TableBody>
-		</Table>
-
+		<div className="max-h-[81dvh] flex flex-col gap-3 bg-secondary">
+			<Table className="bg-secondary">
+				<TableHeader className="sticky top-0 z-10 bg-secondary shadow">
+					<TableRow>
+						<TableHead className="w-2/12">Student ID</TableHead>
+						<TableHead className="w-2/12">Last Name</TableHead>
+						<TableHead className="w-5/12">First Name</TableHead>
+						<TableHead className="w-2/12">Middle Name</TableHead>
+						<TableHead className="w-1/12 text-right"></TableHead>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
+					{
+						loading ? (
+							<TableRow>
+								<TableCell colSpan={5} className="text-center">Loading...</TableCell>
+							</TableRow>
+						) : users.map((user) => (
+							<TableRow key={'ur-' + user.userId} className="hover:bg-primary/15">
+								<TableCell className="font-medium">{user.student_id}</TableCell>
+								<TableCell>{user.lastName}</TableCell>
+								<TableCell>{user.firstName}</TableCell>
+								<TableCell>{user.middleName}</TableCell>
+								<TableCell>
+									<Button variant="default" size="icon" asChild>
+										<Link href={`/clinic/student-records/${user.userId}`}>
+											<Eye />
+										</Link>
+									</Button>
+								</TableCell>
+							</TableRow>
+						))
+					}
+				</TableBody>
+			</Table>
+		</div>
 	</div>
 }

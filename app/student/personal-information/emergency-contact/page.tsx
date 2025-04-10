@@ -188,7 +188,7 @@ export default function EmergencyContact() {
                       render={({ field }) => (
                         <FormItem className="flex flex-col *:w-full gap-2">
                           <div className="flex flex-row gap-4 items-center">
-                            <FormLabel className="flex-1/4">Phone Number:</FormLabel>
+                            <FormLabel className="flex-1/3">Phone Number:</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>

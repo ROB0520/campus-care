@@ -4,6 +4,7 @@ CREATE TABLE Users (
 	email VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
 	role INT NOT NULL DEFAULT 0, -- 0: Patient, 1: Doctor
+	isLocked BOOLEAN NOT NULL DEFAULT FALSE,
 	auth_token VARCHAR(255),
 	token_expiry TIMESTAMP
 );
@@ -85,7 +86,7 @@ CREATE TABLE HealthSurvey (
 
 -- Create table for appointments
 CREATE TABLE Appointments (
-	id SERIAL PRIMARY KEY,
+	id INT AUTO_INCREMENT PRIMARY KEY,
 	userId INT NOT NULL,
 	FOREIGN KEY (userId) REFERENCES Users(id),
 	appointment_timestamp BIGINT NOT NULL,
@@ -114,5 +115,36 @@ CREATE TABLE ClinicProfile (
 	firstName VARCHAR(255) NOT NULL,
 	middleName VARCHAR(255),
 	lastName VARCHAR(255) NOT NULL,
-	position INT NOT NULL -- 0: Doctor, 1: Nurse, 2: Admin
+	position INT NOT NULL -- 0: Doctor, 1: Nurse
+);
+
+-- Create table for resetting passwords
+CREATE TABLE PasswordReset (
+	id SERIAL PRIMARY KEY,
+	userId INT NOT NULL,
+	FOREIGN KEY (userId) REFERENCES Users(id),
+	reset_token VARCHAR(255) NOT NULL,
+	token_expiry TIMESTAMP NOT NULL
+);
+
+-- Create table for appoinment notifications
+CREATE TABLE AppointmentNotifications (
+	id SERIAL PRIMARY KEY,
+	userId INT NOT NULL,
+	FOREIGN KEY (userId) REFERENCES Users(id),
+	type ENUM('reminder', 'approved', 'rescheduled', 'cancelled', 'completed') NOT NULL,
+	appointmentId INT NOT NULL,
+	FOREIGN KEY (appointmentId) REFERENCES Appointments(id),
+	notification_timestamp INT NOT NULL,
+	is_read BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- Create table for admin profile information
+CREATE TABLE AdminProfile (
+	id SERIAL PRIMARY KEY,
+	userId INT NOT NULL,
+	FOREIGN KEY (userId) REFERENCES Users(id),
+	firstName VARCHAR(255) NOT NULL,
+	middleName VARCHAR(255),
+	lastName VARCHAR(255) NOT NULL
 );

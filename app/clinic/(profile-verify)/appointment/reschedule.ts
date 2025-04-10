@@ -2,11 +2,14 @@
 
 import { createConnection } from "@/lib/db"
 
-import { Appointment } from "@/app/clinic/appointment/fetch"
-import { fetchAppointments } from "@/app/clinic/appointment/fetch"
+import { Appointment } from "./fetch"
+import { fetchAppointments } from './fetch'
+import { sendAppointmentNotification } from "./notify"
 
-export async function rescheduleAppointment(appointmentId: number, newDate: number) {
+export async function rescheduleAppointment(appointmentId: number, oldDate: number, newDate: number) {
 	const connection = await createConnection()
+
+	await sendAppointmentNotification(appointmentId, "rescheduled", oldDate)
 
 	// Update the appointment date in the database
 	await connection.query(

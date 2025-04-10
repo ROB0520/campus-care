@@ -11,7 +11,6 @@ const dbConfig = {
 export const createConnection = async () => {
 	try {
 		const connection = await mysql.createConnection(dbConfig);
-		console.log('Database connected successfully');
 		return connection;
 	} catch (error) {
 		console.error('Error connecting to the database:', error);

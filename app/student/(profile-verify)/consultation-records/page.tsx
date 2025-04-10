@@ -10,15 +10,14 @@ import {
 	TableRow,
 } from "@/components/ui/table"
 import { Separator } from "@/components/ui/separator"
-import { fetchConsultHistory, fetchUser, type ConsultHistory } from "../fetch"
+import { fetchConsultHistory, fetchUser, type ConsultHistory } from "./fetch"
 import { useEffect, useState } from "react"
 import moment from "moment-timezone"
-import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { useSearchParams } from "next/navigation"
 import { useSession } from "next-auth/react"
-import Link from "next/link"
 import { CircleUserRound } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function VisitHistory() {
 	const searchParams = useSearchParams()
@@ -26,7 +25,7 @@ export default function VisitHistory() {
 	const [consultRecords, setConsultRecords] = useState<ConsultHistory[]>([])
 	const [loading, setLoading] = useState(true)
 	const [user, setUser] = useState<any>()
-	
+
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -35,45 +34,62 @@ export default function VisitHistory() {
 				if (!isNaN(userId)) {
 					const data = await fetchConsultHistory(userId);
 					const userData = await fetchUser(userId);
+
 					setConsultRecords(data);
-					
 					setUser(userData);
+					setLoading(false)
 				} else {
 					toast.error("Invalid user ID.");
 				}
 			} else {
 				toast.error("Session data is not available.");
 			}
-			setLoading(false)
 		}
 		fetchData()
 	}, [searchParams, session.data?.user?.id])
 
 	return <div className="flex flex-col gap-3">
 		<div className="flex flex-row items-center justify-between">
-			<div className="flex flex-row items-center gap-3">
+			<div className="flex flex-row items-center gap-3 h-24">
 				<CircleUserRound className="size-15" strokeWidth={1.25} />
-				<div className="flex flex-col gap-1 min-w-80">
-					<h1 className="text-2xl font-bold">{user?.fullName}</h1>
-					<div className="flex flex-row gap-2 justify-between">
-						<p className="text-sm text-muted-foreground">{user?.student_id}</p>
-						<p className="text-sm text-muted-foreground">{user?.course_year}</p>
+				<div className="flex flex-col gap-2 min-w-80 ">
+					{
+						loading ?
+							<Skeleton className="h-6 w-64" /> :
+							<h1 className="text-2xl font-bold">
+								{user?.fullName}
+							</h1>
+					}
+					<div className="flex flex-row gap-2 justify-between h-3.5">
+						{
+							loading ? <>
+								<Skeleton className="h-3.5 w-32" />
+								<Skeleton className="h-3.5 w-24" />
+							</>
+								: <>
+									<p className="text-sm text-muted-foreground">
+										{user?.student_id}
+									</p>
+									<p className="text-sm text-muted-foreground">
+										{user?.course_year}
+									</p>
+								</>
+
+						}
 					</div>
-					<p className="text-sm text-muted-foreground">{user?.designation}</p>
+					{
+						loading ?
+							<Skeleton className="h-3.5 w-48" /> :
+							<p className="text-sm text-muted-foreground">
+								{user?.designation}
+							</p>
+					}
+
+
 				</div>
 			</div>
-			<Button
-				variant="secondary"
-				asChild
-			>
-				<Link
-					href="/student/consultation-records"
-				>
-					Back
-				</Link>
-			</Button>
 		</div>
-		<div className="h-[80dvh] flex flex-col gap-3 bg-secondary p-5 rounded-lg">
+		<div className="max-h-[80dvh] flex flex-col gap-3 bg-secondary p-5 rounded-lg">
 			<h1 className="text-2xl font-bold text-left">Visit History</h1>
 			<Separator />
 			<Table className="bg-secondary overflow-x-scroll ">

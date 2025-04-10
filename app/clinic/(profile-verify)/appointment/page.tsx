@@ -34,6 +34,7 @@ import { toast } from "sonner"
 import { setStatus } from "./status"
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Badge } from "@/components/ui/badge"
+import { sendAppointmentNotification } from "./notify"
 
 
 
@@ -53,7 +54,7 @@ export default function AppointmentPage() {
 		fetchInitialData()
 	}, [searchParams])
 
-	 
+
 	async function fetchData() {
 		setLoading(true)
 		const data = await fetchAppointments(searchParams?.get('s') || '')
@@ -65,6 +66,7 @@ export default function AppointmentPage() {
 		const handleAccept = async () => {
 			await setStatus(appointmentId, 'approved')
 			toast.success("Appointment Approved")
+			await sendAppointmentNotification(appointmentId, 'approved')
 			await fetchData()
 		}
 
@@ -88,6 +90,7 @@ export default function AppointmentPage() {
 		const handleComplete = async () => {
 			await setStatus(appointmentId, 'completed')
 			toast.success("Appointment Completed")
+			await sendAppointmentNotification(appointmentId, 'completed')
 			await fetchData()
 		}
 
@@ -112,6 +115,7 @@ export default function AppointmentPage() {
 		const handleCancel = async () => {
 			await setStatus(appointmentId, 'cancelled')
 			toast.success("Appointment Cancelled")
+			await sendAppointmentNotification(appointmentId, 'cancelled')
 			await fetchData()
 		}
 
@@ -165,7 +169,7 @@ export default function AppointmentPage() {
 				// If Saturday, push to Monday
 				initialDate.setDate(initialDate.getDate() + 2);
 			}
-			
+
 			if (initialDate.toDateString() === new Date().toDateString()) {
 				const now = new Date();
 				initialDate.setHours(now.getHours());
@@ -203,9 +207,9 @@ export default function AppointmentPage() {
 
 		const submitUpdate = async () => {
 			if (!date) return;
-			const timestamp = Math.floor(date.getTime() / 1000);
+			const timestamp = Math.floor(date.getTime());
 
-			await rescheduleAppointment(appointmentId, timestamp)
+			await rescheduleAppointment(appointmentId, originalTimestamp, timestamp)
 			toast.success("Appointment Rescheduled")
 			await fetchData()
 		}
@@ -337,71 +341,72 @@ export default function AppointmentPage() {
 			/>
 		</div>
 		<Separator />
-		<Table className="bg-secondary flex-grow">
-			<TableHeader className="sticky top-0 z-10 bg-secondary">
-				<TableRow>
-					<TableHead className="w-2/12">Student ID</TableHead>
-					<TableHead className="w-3/12">Name</TableHead>
-					<TableHead className="w-1/12">Contact Number</TableHead>
-					<TableHead className="w-4/12 text-right">Date & Time</TableHead>
-					<TableHead className="w-1/12 text-center">Status</TableHead>
-					<TableHead className="w-1/12 text-right"></TableHead>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{
-					loading ? (
-						<TableRow>
-							<TableCell colSpan={5} className="text-center">Loading...</TableCell>
-						</TableRow>
-					) : appointments.map((appointment) => (
-						<TableRow key={appointment.id} className={
-							cn(
-								"hover:bg-primary/15",
-								appointment.status === 'pending' && 'bg-yellow-50',
-								appointment.status === 'approved' && 'bg-green-50',
-								appointment.status === 'cancelled' && 'bg-red-50',
-								appointment.status === 'completed' && 'bg-blue-50'
-							)
-						}>
-							<TableCell className="font-medium">{appointment.student_id}</TableCell>
-							<TableCell>{appointment.lastName}, {appointment.firstName} {appointment.middleName}</TableCell>
-							<TableCell>{appointment.contactNumber}</TableCell>
-							<TableCell className="text-right">
-								{moment.unix(appointment.appointment_timestamp / 1000).local().format('MMMM DD, YYYY @ hh:mm A')}
-							</TableCell>
-							<TableCell className="text-center">
-								<Badge variant='default' className={cn(
-									appointment.status === 'pending' && 'bg-yellow-600 text-yellow-100',
-									appointment.status === 'approved' && 'bg-green-700 text-green-100',
-									appointment.status === 'cancelled' && 'bg-red-700 text-red-100',
-									appointment.status === 'completed' && 'bg-blue-700 text-blue-100'
-								)}>
-									{appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
-								</Badge>
-							</TableCell>
-							<TableCell className="flex items-center justify-end gap-2">
-								{
-									appointment.status === 'pending' ? (
-										<>
-											<ApproveButton appointmentId={appointment.id} />
-											<CancelButton appointmentId={appointment.id} />
-											<RescheduleButton appointmentId={appointment.id} originalTimestamp={appointment.appointment_timestamp} />
-										</>
-									) : (
-										appointment.status === 'approved' ? (<>
-											<CompleteButton appointmentId={appointment.id} />
-											<CancelButton appointmentId={appointment.id} />
-											<RescheduleButton appointmentId={appointment.id} originalTimestamp={appointment.appointment_timestamp} />
-										</>) : null
-									)
-								}
-							</TableCell>
-						</TableRow>
-					))
-				}
-			</TableBody>
-		</Table>
-
+		<div className="flex max-h-[80.5dvh] flex-col overflow-hidden bg-secondary">
+			<Table>
+				<TableHeader className="sticky top-0 border-0 bg-secondary shadow-border shadow-[inset_0_-1px_0]">
+					<TableRow>
+						<TableHead className="w-2/12">Student ID</TableHead>
+						<TableHead className="w-3/12">Name</TableHead>
+						<TableHead className="w-1/12">Contact Number</TableHead>
+						<TableHead className="w-4/12 text-right">Date & Time</TableHead>
+						<TableHead className="w-1/12 text-center">Status</TableHead>
+						<TableHead className="w-1/12 text-right"></TableHead>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
+					{
+						loading ? (
+							<TableRow>
+								<TableCell colSpan={6} className="text-center">Loading...</TableCell>
+							</TableRow>
+						) : appointments.map((appointment) => (
+							<TableRow key={appointment.id} className={
+								cn(
+									"hover:bg-primary/15",
+									appointment.status === 'pending' && 'bg-yellow-50',
+									appointment.status === 'approved' && 'bg-green-50',
+									appointment.status === 'cancelled' && 'bg-red-50',
+									appointment.status === 'completed' && 'bg-blue-50'
+								)
+							}>
+								<TableCell className="font-medium">{appointment.student_id}</TableCell>
+								<TableCell>{appointment.lastName}, {appointment.firstName} {appointment.middleName}</TableCell>
+								<TableCell>{appointment.contactNumber}</TableCell>
+								<TableCell className="text-right">
+									{moment.unix(appointment.appointment_timestamp).local().format('MMMM DD, YYYY @ hh:mm A')}
+								</TableCell>
+								<TableCell className="\text-center">
+									<Badge variant='default' className={cn(
+										appointment.status === 'pending' && 'bg-yellow-600 text-yellow-100',
+										appointment.status === 'approved' && 'bg-green-700 text-green-100',
+										appointment.status === 'cancelled' && 'bg-red-700 text-red-100',
+										appointment.status === 'completed' && 'bg-blue-700 text-blue-100'
+									)}>
+										{appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+									</Badge>
+								</TableCell>
+								<TableCell className="flex items-center justify-end gap-2">
+									{
+										appointment.status === 'pending' ? (
+											<>
+												<ApproveButton appointmentId={appointment.id} />
+												<CancelButton appointmentId={appointment.id} />
+												<RescheduleButton appointmentId={appointment.id} originalTimestamp={appointment.appointment_timestamp} />
+											</>
+										) : (
+											appointment.status === 'approved' ? (<>
+												<CompleteButton appointmentId={appointment.id} />
+												<CancelButton appointmentId={appointment.id} />
+												<RescheduleButton appointmentId={appointment.id} originalTimestamp={appointment.appointment_timestamp} />
+											</>) : null
+										)
+									}
+								</TableCell>
+							</TableRow>
+						))
+					}
+				</TableBody>
+			</Table>
+		</div>
 	</div>
 }

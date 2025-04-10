@@ -121,7 +121,7 @@ export default function ConsultationHistory() {
 				diagnosis: diagnosisValue,
 				medication: medicationValue,
 				remarks: remarksValue,
-				consultation_timestamp: Math.floor(dateValue.getTime() / 1000),
+				consultation_timestamp: Math.floor(dateValue.getTime()),
 			}
 			toast.success("Consultation record added successfully.")
 			setStudentValue("")
@@ -407,66 +407,67 @@ export default function ConsultationHistory() {
 			</div>
 		</div>
 		<Separator />
-		<Table className="bg-secondary overflow-x-scroll">
-			<TableHeader className="sticky top-0 z-10 bg-secondary">
-				<TableRow>
-					<TableHead>Date and Time</TableHead>
-					<TableHead>Student ID</TableHead>
-					<TableHead>Full Name</TableHead>
-					<TableHead>Course and Section</TableHead>
-					<TableHead>Attending Personnel</TableHead>
-					<TableHead>Reason for Visit</TableHead>
-					<TableHead>Diagnosis / Observations</TableHead>
-					<TableHead>Medication Given</TableHead>
-					<TableHead className="max-w-2xl">Remarks / Follow-up</TableHead>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{
-					loading ? (
-						<TableRow>
-							<TableCell colSpan={9} className="text-center">Loading...</TableCell>
-						</TableRow>
-					) : consultRecords.map((record) => (
-						<TableRow key={record.id} className="hover:bg-primary/15">
-							<TableCell className="text-left">{moment.unix(record.consultation_timestamp).tz("Asia/Manila").format('MMMM DD, YYYY @ hh:mm A')}</TableCell>
-							<TableCell className="text-left">{record.student_id}</TableCell>
-							<TableCell className="text-left">{record.fullName}</TableCell>
-							<TableCell className="text-left">{record.course_year}</TableCell>
-							<TableCell className="text-left">
-								{record.attendingPersonnelPosition === 0 ?
-									'Dr.' : (
-										record.attendingPersonnelPosition === 1 ?
-											'Nurse' : null
-									)}
-								&nbsp;
-								{record.attendingPersonnelName}
-							</TableCell>
-							<TableCell className="text-left">
-								<p className="whitespace-normal break-words w-max max-w-xl">
-									{record.reason}
-								</p>
-							</TableCell>
-							<TableCell className="text-left">
-								<p className="whitespace-normal break-words w-max max-w-xl">
-									{record.diagnosis}
-								</p>
-							</TableCell>
-							<TableCell className="text-left">
-								<p className="whitespace-normal break-words w-max max-w-xl">
-									{record.medication}
-								</p>
-							</TableCell>
-							<TableCell className="text-left">
-								<p className="whitespace-normal break-words w-max max-w-xl">
-									{record.remarks || "-"}
-								</p>
-							</TableCell>
-						</TableRow>
-					))
-				}
-			</TableBody>
-		</Table>
-
+		<div className="flex max-h-[80.5dvh] flex-col overflow-hidden">
+			<Table className="bg-secondary overflow-x-scroll">
+				<TableHeader className="sticky top-0 border-0 bg-secondary shadow-border shadow-[inset_0_-1px_0]">
+					<TableRow>
+						<TableHead>Date and Time</TableHead>
+						<TableHead>Student ID</TableHead>
+						<TableHead>Full Name</TableHead>
+						<TableHead>Course and Section</TableHead>
+						<TableHead>Attending Personnel</TableHead>
+						<TableHead>Reason for Visit</TableHead>
+						<TableHead>Diagnosis / Observations</TableHead>
+						<TableHead>Medication Given</TableHead>
+						<TableHead className="max-w-2xl">Remarks / Follow-up</TableHead>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
+					{
+						loading ? (
+							<TableRow>
+								<TableCell colSpan={9} className="text-center">Loading...</TableCell>
+							</TableRow>
+						) : consultRecords.map((record) => (
+							<TableRow key={record.id} className="hover:bg-primary/15">
+								<TableCell className="text-left">{moment.unix(record.consultation_timestamp).tz("Asia/Manila").format('MMMM DD, YYYY @ hh:mm A')}</TableCell>
+								<TableCell className="text-left">{record.student_id}</TableCell>
+								<TableCell className="text-left">{record.fullName}</TableCell>
+								<TableCell className="text-left">{record.course_year}</TableCell>
+								<TableCell className="text-left">
+									{record.attendingPersonnelPosition === 0 ?
+										'Dr.' : (
+											record.attendingPersonnelPosition === 1 ?
+												'Nurse' : null
+										)}
+									&nbsp;
+									{record.attendingPersonnelName}
+								</TableCell>
+								<TableCell className="text-left">
+									<p className="whitespace-normal break-words w-max max-w-xl">
+										{record.reason}
+									</p>
+								</TableCell>
+								<TableCell className="text-left">
+									<p className="whitespace-normal break-words w-max max-w-xl">
+										{record.diagnosis}
+									</p>
+								</TableCell>
+								<TableCell className="text-left">
+									<p className="whitespace-normal break-words w-max max-w-xl">
+										{record.medication}
+									</p>
+								</TableCell>
+								<TableCell className="text-left">
+									<p className="whitespace-normal break-words w-max max-w-xl">
+										{record.remarks || "-"}
+									</p>
+								</TableCell>
+							</TableRow>
+						))
+					}
+				</TableBody>
+			</Table>
+		</div>
 	</div>
 }

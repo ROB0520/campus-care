@@ -1,9 +1,8 @@
-import { Hospital } from "lucide-react"
-
 import { LoginForm } from "@/components/login-form"
 import LoginBg from '@/app/login-bg.jpg'
 import Image from "next/image"
 import { Suspense } from 'react'
+import Logo from "@/components/logo"
 
 import { Metadata } from "next"
 
@@ -20,7 +19,7 @@ export default function LoginPage() {
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              <Hospital className="size-4" />
+              <Logo className="size-4 fill-white" />
             </div>
             Campus Care
           </a>
@@ -28,7 +27,7 @@ export default function LoginPage() {
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
             <Suspense>
-            <LoginForm />
+              <LoginForm />
            </Suspense>
           </div>
         </div>

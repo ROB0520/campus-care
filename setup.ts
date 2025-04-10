@@ -10,11 +10,16 @@ dotenv.config({
 async function main() {
 	// Create a connection to the database
 	const connection = await mysql.createConnection({
-		host: '51.79.196.57',
-		user: 'root',
-		password: 'egXHOV9R7rZoLchotBud7F3RXSUn7r4Wt1UpQkzLW3LsgPJw23efXCG0dBKG5LHF',
-		database: 'default',
-		port: Number(3307),
+		// host: '51.79.196.57',
+		// user: 'root',
+		// password: 'egXHOV9R7rZoLchotBud7F3RXSUn7r4Wt1UpQkzLW3LsgPJw23efXCG0dBKG5LHF',
+		// database: 'default',
+		// port: Number(3307),
+		host: process.env.DB_HOST,
+		user: process.env.DB_USER,
+		password: process.env.DB_PASSWORD,
+		database: process.env.DB_NAME,
+		port: Number(process.env.DB_PORT),
 	});
 
 	try {
@@ -51,7 +56,7 @@ async function main() {
 			do {
 				randomDate = moment(start.valueOf() + Math.random() * (end.valueOf() - start.valueOf()));
 			} while (randomDate.isoWeekday() > 5); // Ensure it's Monday-Friday
-			return randomDate.valueOf();
+			return randomDate.valueOf() / 1000; // Convert to seconds
 		}
 
 		// Helper function to get random values for consultation history
@@ -212,8 +217,6 @@ async function main() {
 				// Ensure there are clinic Users with role 1
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				if ((clinicUsersWithRole1 as any[]).length > 0) {
-					console.log('Clinic Users with role 1:', clinicUsersWithRole1);
-
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					const attendingPersonnelId = (clinicUsersWithRole1 as any[])[Math.floor(Math.random() *
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -232,7 +235,7 @@ async function main() {
 							consultationData.diagnosis,
 							consultationData.medication,
 							consultationData.remarks,
-							Date.now() - Math.floor(Math.random() * 30) * 86400000, // Random past date
+							(Date.now() - Math.floor(Math.random() * 30) * 86400000) / 1000, // Random past date
 						]
 					);
 				} else {
