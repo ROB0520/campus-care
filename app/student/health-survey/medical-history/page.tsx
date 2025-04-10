@@ -127,7 +127,11 @@ export default function Home() {
             dbData[key] = Boolean(dbData[key]);
           }
         }
-        for (const key in dbData) {
+        const schemaFields = Object.keys(medicalHistorySchema.innerType().shape);
+        const filteredData = Object.fromEntries(
+          Object.entries(dbData).filter(([key]) => schemaFields.includes(key))
+        );
+        for (const key in filteredData) {
           if (dbData[key] === undefined) continue;
 
           form.setValue(key as keyof MedicalHistorySchema, dbData[key]);

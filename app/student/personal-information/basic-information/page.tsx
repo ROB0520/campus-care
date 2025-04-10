@@ -49,7 +49,7 @@ export default function BasicInformation() {
   const setData = useBasicInfoStore((state) => state.setData);
   const session = useSession();
   const step = useBasicInfoStore((state) => state.step);
-  const setStep = useBasicInfoStore((state) => state.setStep);  
+  const setStep = useBasicInfoStore((state) => state.setStep);
 
   const form = useForm<BasicInfoSchema>({
     resolver: zodResolver(basicInfoSchema),
@@ -71,7 +71,7 @@ export default function BasicInformation() {
       pwdID: undefined,
     }
   });
-  
+
   useEffect(() => {
     if (session.data?.user?.id === undefined) return;
     const userId = session.data.user.id;
@@ -86,15 +86,22 @@ export default function BasicInformation() {
             dbData[key] = undefined;
           }
         }
-        for (const key in dbData) {
+        // Ensure we're only processing fields that exist in the schema
+        const schemaFields = Object.keys(basicInfoSchema.shape);
+        const filteredData = Object.fromEntries(
+          Object.entries(dbData).filter(([key]) => schemaFields.includes(key))
+        );
+        for (const key in filteredData) {
           if (dbData[key] === undefined) continue;
-          
+
           form.setValue(key as keyof BasicInfoSchema, dbData[key]);
         }
       }
+      setData(dbData as Partial<BasicInfoSchema>);
     })
-  }, [form, session?.data?.user?.id]);
-  
+
+  }, [form, session?.data?.user?.id, setData]);
+
 
   const handleTabChange = async (tab: string) => {
     const result = await form.trigger()
@@ -106,7 +113,7 @@ export default function BasicInformation() {
       delete processedData.pwdID;
     }
     setData(processedData);
-    
+
     switch (tab) {
       case "school-information":
         if (step === 0) setStep(1);
@@ -343,7 +350,7 @@ export default function BasicInformation() {
                             <FormControl>
                               <Input value={field.value} onChange={(e) => field.onChange(Number(e.target.value))} />
                             </FormControl>
-                          </div>   
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -355,8 +362,8 @@ export default function BasicInformation() {
                         <FormItem className="flex items-center gap-4">
                           <FormLabel className="flex-1/5">Blood Type:</FormLabel>
                           <FormControl>
-                            <Select 
-                              onValueChange={field.onChange} 
+                            <Select
+                              onValueChange={field.onChange}
                               defaultValue={field.value}
                               {...field}
                             >

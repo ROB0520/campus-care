@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import moment from "moment-timezone";
 
 function DataRow({ label, value }: { label: string; value: string | number | boolean | React.ReactNode }) {
 	return (
@@ -265,14 +266,7 @@ export default async function StudentInfo({
 							<TableRow key={appointment.appointmentId} className="hover:bg-primary/10">
 								<TableCell className="text-left">
 									{
-										new Date(Number(appointment.appointment_timestamp)).toLocaleDateString('en-US', {
-											year: 'numeric',
-											month: 'long',
-											day: 'numeric',
-											hour12: true,
-											hour: '2-digit',
-											minute: '2-digit',
-										})
+										moment.unix(appointment.appointment_timestamp as unknown as number).tz('Asia/Manila').format('MMMM D, YYYY h:mm A')
 									}
 								</TableCell>
 								<TableCell className="text-left">

@@ -66,29 +66,33 @@ export default function Home() {
   });
 
   useEffect(() => {
-      if (session.data?.user?.id === undefined) return;
-      const userId = session.data.user.id;
-      fetchDataFromDB(Number(userId)).then((dbData) => {
-        if (dbData) {
-          for (const key in dbData) {
-            if (dbData[key] === null) {
-              dbData[key] = undefined;
-            }
-            if ([
-              'hasVaccineAllergies',
-              'withCovidCommurbidity',
-            ].includes(key)) {
-              dbData[key] = Boolean(dbData[key]);
-            }
+    if (session.data?.user?.id === undefined) return;
+    const userId = session.data.user.id;
+    fetchDataFromDB(Number(userId)).then((dbData) => {
+      if (dbData) {
+        for (const key in dbData) {
+          if (dbData[key] === null) {
+            dbData[key] = undefined;
           }
-          for (const key in dbData) {
-            if (dbData[key] === undefined) continue;
-            
-            form.setValue(key as keyof MedicalHistorySchema, dbData[key]);
-          }          
+          if ([
+            'hasVaccineAllergies',
+            'withCovidCommurbidity',
+          ].includes(key)) {
+            dbData[key] = Boolean(dbData[key]);
+          }
         }
-      })
-    }, [form, session?.data?.user?.id]);
+        const schemaFields = Object.keys(vaccinationRecordsSchema.shape);
+        const filteredData = Object.fromEntries(
+          Object.entries(dbData).filter(([key]) => schemaFields.includes(key))
+        );
+        for (const key in filteredData) {
+          if (dbData[key] === undefined) continue;
+
+          form.setValue(key as keyof MedicalHistorySchema, dbData[key]);
+        }
+      }
+    })
+  }, [form, session?.data?.user?.id]);
 
   const handleTabChange = async (tab: string) => {
     const result = await form.trigger()
@@ -306,8 +310,8 @@ export default function Home() {
                         <FormItem>
                           <FormLabel>Vaccination Status</FormLabel>
                           <FormControl>
-                            <Select 
-                              onValueChange={field.onChange} 
+                            <Select
+                              onValueChange={field.onChange}
                               defaultValue={field.value}
                               {...field}
                             >

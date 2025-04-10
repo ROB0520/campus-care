@@ -35,34 +35,39 @@ export default function SchoolInformation() {
     resolver: zodResolver(schoolInfoSchema),
     reValidateMode: "onSubmit",
     defaultValues: data ?? {
-        student_id: undefined,
-        course_year: undefined,
-        designation: undefined,
-      },
+      student_id: undefined,
+      course_year: undefined,
+      designation: undefined,
+    },
   });
 
   useEffect(() => {
-      if (session.data?.user?.id === undefined) return;
-      const userId = session.data.user.id;
-      fetchDataFromDB(Number(userId)).then((dbData) => {
-        if (dbData) {
-          dbData.dateOfBirth = dbData.dateOfBirth ? new Date(dbData.dateOfBirth) : null;
-          dbData.height = dbData.height ? Number(dbData.height) : null;
-          dbData.weight = dbData.weight ? Number(dbData.weight) : null;
-          dbData.isPWD = Boolean(dbData.isPWD);
-          for (const key in dbData) {
-            if (dbData[key] === null) {
-              dbData[key] = undefined;
-            }
-          }
-          for (const key in dbData) {
-            if (dbData[key] === undefined) continue;
-            
-            form.setValue(key as keyof SchoolInfoSchema, dbData[key]);
+    if (session.data?.user?.id === undefined) return;
+    const userId = session.data.user.id;
+    fetchDataFromDB(Number(userId)).then((dbData) => {
+      if (dbData) {
+        dbData.dateOfBirth = dbData.dateOfBirth ? new Date(dbData.dateOfBirth) : null;
+        dbData.height = dbData.height ? Number(dbData.height) : null;
+        dbData.weight = dbData.weight ? Number(dbData.weight) : null;
+        dbData.isPWD = Boolean(dbData.isPWD);
+        for (const key in dbData) {
+          if (dbData[key] === null) {
+            dbData[key] = undefined;
           }
         }
-      })
-    }, [form, session?.data?.user?.id]);
+        const schemaFields = Object.keys(schoolInfoSchema.shape);
+        const filteredData = Object.fromEntries(
+          Object.entries(dbData).filter(([key]) => schemaFields.includes(key))
+        );
+        for (const key in filteredData) {
+          if (dbData[key] === undefined) continue;
+
+          form.setValue(key as keyof SchoolInfoSchema, dbData[key]);
+        }
+      }
+      setData(dbData as Partial<SchoolInfoSchema>);
+    })
+  }, [form, session?.data?.user?.id, setData]);
 
   const handleTabChange = async (tab: string) => {
     const result = await form.trigger();

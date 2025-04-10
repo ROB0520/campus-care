@@ -42,15 +42,23 @@ export default function Appointment() {
 		const isAfterHours = currentHour >= 18 || (currentHour === 18 && currentMinute > 0)
 		const isBeforeClinicHours = currentHour < 8 || (currentHour === 8 && currentMinute < 0)
 
-		if (isWeekend || (isAfterHours && currentMinute >= 45)) {
+		if (isWeekend) {
 			const nextMonday = new Date(now)
 			nextMonday.setDate(now.getDate() + ((8 - currentDay) % 7)) // Move to next Monday
 			nextMonday.setHours(8, 0, 0, 0) // Set to 8:00 AM
 			return nextMonday
-		} else if (isBeforeClinicHours) {
-			const today = new Date(now)
-			today.setHours(8, 0, 0, 0) // Set to 8:00 AM
-			return today
+		}
+		if (isAfterHours || (isBeforeClinicHours && currentMinute >= 45)) {
+			const nextDay = new Date(now)
+			nextDay.setDate(now.getDate() + 1) // Move to next day
+			nextDay.setHours(8, 0, 0, 0) // Set to 8:00 AM
+			return nextDay
+		}
+
+		if (isBeforeClinicHours) {
+			const nextHour = new Date(now)
+			nextHour.setHours(8, 0, 0, 0) // Set to 8:00 AM
+			return nextHour
 		}
 
 		now.setHours(currentHour, currentMinute + 15, 0, 0) // Set to 15 minutes ahead

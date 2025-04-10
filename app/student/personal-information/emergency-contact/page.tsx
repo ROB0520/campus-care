@@ -42,12 +42,12 @@ export default function EmergencyContact() {
     resolver: zodResolver(emergencyContactSchema),
     reValidateMode: "onSubmit",
     defaultValues: data ?? {
-          em_first_name: undefined,
-          em_last_name: undefined,
-          em_address: undefined,
-          em_phone_number: undefined,
-          em_email: undefined,
-        },
+      em_first_name: undefined,
+      em_last_name: undefined,
+      em_address: undefined,
+      em_phone_number: undefined,
+      em_email: undefined,
+    },
   });
 
   useEffect(() => {
@@ -64,14 +64,19 @@ export default function EmergencyContact() {
             dbData[key] = undefined;
           }
         }
-        for (const key in dbData) {
+        const schemaFields = Object.keys(emergencyContactSchema.shape);
+        const filteredData = Object.fromEntries(
+          Object.entries(dbData).filter(([key]) => schemaFields.includes(key))
+        );
+        for (const key in filteredData) {
           if (dbData[key] === undefined) continue;
-          
+
           form.setValue(key as keyof EmergencyContactSchema, dbData[key]);
         }
       }
+      setData(dbData as Partial<EmergencyContactSchema>);
     })
-  }, [form, session?.data?.user?.id]);
+  }, [form, session?.data?.user?.id, setData]);
 
   const handleTabChange = async (tab: string) => {
     const result = await form.trigger();
@@ -89,7 +94,7 @@ export default function EmergencyContact() {
         return router.push("/student/personal-information/basic-information");
     }
   };
-  
+
   const saveResponse = async () => await saveData(data);
 
   return (
