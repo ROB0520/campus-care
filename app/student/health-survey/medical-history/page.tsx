@@ -517,10 +517,9 @@ export default function Home() {
                         <FormItem className="flex items-center gap-4">
                           <FormControl>
                             <RadioGroup
-                              onValueChange={(value) => field.onChange(Boolean(value))}
+                              onValueChange={(value) => field.onChange(value === 'true')}
                               value={String(field.value)}
                               className="flex flex-row items-center gap-4"
-                              ref={field.ref}
                             >
                               <FormItem className="flex items-center flex-row gap-2">
                                 <FormControl className="peer">
@@ -574,10 +573,9 @@ export default function Home() {
                         <FormItem className="flex items-center gap-4">
                           <FormControl>
                             <RadioGroup
-                              onValueChange={(value) => field.onChange(Boolean(value))}
+                              onValueChange={(value) => field.onChange(value === 'true')}
                               value={String(field.value)}
                               className="flex flex-row items-center gap-4"
-                              ref={field.ref}
                             >
                               <FormItem className="flex items-center flex-row gap-2">
                                 <FormControl className="peer">
@@ -615,10 +613,9 @@ export default function Home() {
                         <FormItem className="flex items-center gap-4">
                           <FormControl>
                             <RadioGroup
-                              onValueChange={(value) => field.onChange(Boolean(value))}
+                              onValueChange={(value) => field.onChange(value === 'true')}
                               value={String(field.value)}
                               className="flex flex-row items-center gap-4"
-                              ref={field.ref}
                             >
                               <FormItem className="flex items-center flex-row gap-2">
                                 <FormControl className="peer">
@@ -672,7 +669,7 @@ export default function Home() {
                         <FormItem className="flex items-center gap-4">
                           <FormControl>
                             <RadioGroup
-                              onValueChange={(value) => field.onChange(Boolean(value))}
+                              onValueChange={(value) => field.onChange(value === 'true')}
                               value={String(field.value)}
                               className="flex flex-row items-center gap-4"
                             >
