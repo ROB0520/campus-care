@@ -219,7 +219,7 @@ export default function Appointment() {
 										setShowDialog(false);
 										return;
 									}
-									saveAppointment(date.getTime(), Number(userId)).then(() => {
+									saveAppointment(date.getTime() / 1000, Number(userId)).then(() => {
 										toast.success("Appointment booked successfully.")
 										setShowDialog(false)
 									}).catch((error) => {
