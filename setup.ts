@@ -43,7 +43,7 @@ async function main() {
 		const clinicUsers = [
 			{ firstName: 'John', lastName: 'Doe', position: 0 },
 			{ firstName: 'Jane', lastName: 'Smith', position: 1 },
-			{ firstName: 'Alice', lastName: 'Brown', position: 2 },
+			{ firstName: 'Alice', lastName: 'Brown', position: 1 },
 			{ firstName: 'Bob', lastName: 'Johnson', position: 0 },
 			{ firstName: 'Charlie', lastName: 'Davis', position: 1 },
 		];
@@ -130,6 +130,29 @@ async function main() {
 					'emergency@contact.com', // Default emergency contact email
 				]
 			);
+
+			// Insert admin accounts
+			const admins = [
+				{ firstName: 'Admin', lastName: 'One' },
+				{ firstName: 'Admin', lastName: 'Two' },
+				{ firstName: 'Admin', lastName: 'Three' },
+				{ firstName: 'Admin', lastName: 'Four' },
+				{ firstName: 'Admin', lastName: 'Five' }
+			];
+
+			for (const admin of admins) {
+				const [userResult] = await connection.query(
+					`INSERT INTO Users (email, password, role) VALUES (?, ?, ?)`,
+					[`${admin.firstName.toLowerCase()}.${admin.lastName.toLowerCase()}@admin.edu`, hashedPassword, '2']
+				);
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const userId = (userResult as any).insertId;
+				
+				await connection.query(
+					`INSERT INTO ClinicProfile (userId, firstName, middleName, lastName, position) VALUES (?, ?, ?, ?, ?)`,
+					[userId, admin.firstName, null, admin.lastName, 2] // position 2 for admin
+				);
+			}
 
 			// Insert health survey - ensure column count matches value count
 			await connection.execute(
