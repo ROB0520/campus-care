@@ -11,6 +11,7 @@ import moment from "moment-timezone";
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { toast } from "sonner";
+import { getUserNotifications } from "./fetch";
 
 export default function NotifButton({
 	hasUnread,
@@ -26,6 +27,7 @@ export default function NotifButton({
 	userId: string
 }) {
 	const [internalHasUnread, setInternalHasUnread] = useState(hasUnread);
+	const [internalNotifications, setInternalNotifications] = useState(notifications);
 	// Create socket connection
 
 	// Add socket event handlers
@@ -37,6 +39,11 @@ export default function NotifButton({
 			console.log('Appointment Notification:', data);
 			toast.info('You have a new appointment notification')
 			setInternalHasUnread(true);
+			getUserNotifications(userId as unknown as number).then(
+				(data) => {
+					setInternalNotifications(data);
+				}
+			)
 		});
 
 		return () => {
@@ -65,8 +72,8 @@ export default function NotifButton({
 			</PopoverTrigger>
 			<PopoverContent collisionPadding={20} align="end" className="w-sm p-2 max-h-80 overflow-y-auto">
 				{
-					notifications.length > 0 ?
-						notifications.map((notification) => (
+					internalNotifications.length > 0 ?
+						internalNotifications.map((notification) => (
 							<div key={notification.id} className="bg-background w-full p-4 not-last:border-b border-muted">
 								<div className="flex items-center gap-2">
 									<div
