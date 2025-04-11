@@ -37,8 +37,6 @@ import { Badge } from "@/components/ui/badge"
 import { sendAppointmentNotification } from "./notify"
 import Link from "next/link"
 
-
-
 export default function AppointmentPage() {
 	const [appointments, setAppointments] = useState<Appointment[]>([])
 	const [loading, setLoading] = useState(true)

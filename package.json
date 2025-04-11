@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "start:prod": "concurrently --kill-others \"npx tsx ./server.ts\" \"node .next/standalone/server.js\""
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.2",
@@ -32,6 +33,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
+    "express": "^5.1.0",
     "lucide-react": "^0.476.0",
     "moment-timezone": "^0.5.48",
     "mysql2": "^3.14.0",
@@ -45,6 +47,7 @@
     "react-day-picker": "^9.6.3",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.54.2",
+    "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.0.2",
@@ -55,10 +58,12 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/express": "^5.0.1",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
+    "concurrently": "^9.1.2",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "tailwindcss": "^4",

@@ -3,15 +3,19 @@
 import { Button } from "@/components/ui/button";
 import { Bell, BellDot, BellRing, CalendarCheck2, CalendarDays, MessageSquareOff } from "lucide-react";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
 } from "@/components/ui/popover"
 import moment from "moment-timezone";
+import { useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
+import { toast } from "sonner";
 
 export default function NotifButton({
 	hasUnread,
 	notifications,
+	userId
 }: {
 	hasUnread: boolean;
 	notifications: {
@@ -19,18 +23,41 @@ export default function NotifButton({
 		type: 'cancelled' | 'approved' | 'rescheduled' | 'reminder';
 		date: string;
 	}[]
+	userId: string
 }) {
+	const [internalHasUnread, setInternalHasUnread] = useState(hasUnread);
+	// Create socket connection
+
+	// Add socket event handlers
+	useEffect(() => {
+		const socket: Socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3519');
+		socket.emit('join', userId);
+
+		socket.on('appointmentUpdate', (data) => {
+			console.log('Appointment Notification:', data);
+			toast.info('You have a new appointment notification')
+			setInternalHasUnread(true);
+		});
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
+
 	return (
 		<Popover>
-			<PopoverTrigger 
+			<PopoverTrigger
 				asChild
 			>
 				<Button
 					variant="ghost"
 					size='icon'
+					onClick={() => {
+						setInternalHasUnread(false);
+					}}
 				>
 					{
-						hasUnread ?
+						internalHasUnread ?
 							<BellDot className="size-6" /> :
 							<Bell className="size-6" />
 					}

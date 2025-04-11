@@ -19,6 +19,13 @@ export default async function RootLayout({
 }>) {
   const session = await auth()
 
+  if (!session?.user)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-lg">You are not logged in.</p>
+      </div>
+    );
+
   if (session?.user?.role != 0)
     return (
       <div className="flex items-center justify-center h-screen">
@@ -39,7 +46,7 @@ export default async function RootLayout({
           <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl flex-1">
             Campus Care
           </h1>
-          <NotifButton hasUnread={hasUnread} notifications={notifications} />
+          <NotifButton hasUnread={hasUnread} notifications={notifications} userId={session.user.id as string} />
         </header>
         <section className="flex-grow overflow-x-hidden max-h-full *:p-5">
           {children}
