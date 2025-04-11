@@ -122,7 +122,7 @@ export default function Home() {
   }
 
   const saveResponse = async () => {
-    toast.success('Your Personal Information is now saved.')
+    toast.success('Your Health Survey Data is now saved.')
     await saveData(data)
   };
 
