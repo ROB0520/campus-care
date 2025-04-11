@@ -18,6 +18,7 @@ import { getUserId } from "../getUserId";
 import { fetchDataFromDB } from "../fetchData";
 import { useSession } from "next-auth/react";
 import { useUIState } from "@/app/student/store";
+import { toast } from 'sonner';
 
 const emergencyContactSchema = personalInformationSchema.pick({
   emFirstName: true,
@@ -98,6 +99,7 @@ export default function EmergencyContact() {
   };
 
   const saveResponse = async () => await saveData(data).then(() => {
+    toast.success('Your Personal Information is now saved.')
     setUsername(data.firstName + " " + data.lastName);
     setIsSubmitting(false);
   });

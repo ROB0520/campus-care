@@ -34,6 +34,7 @@ import { Info } from "lucide-react";
 import { getUserId } from "../getUserId";
 import { fetchDataFromDB } from "../fetchData";
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 
 const vaccinationRecordsSchema = healthSurveySchema.pick({
@@ -120,7 +121,10 @@ export default function Home() {
     setIsSubmitting(true);
   }
 
-  const saveResponse = async () => await saveData(data);
+  const saveResponse = async () => {
+    toast.success('Your Personal Information is now saved.')
+    await saveData(data)
+  };
 
   return (
     <div className="py-8">

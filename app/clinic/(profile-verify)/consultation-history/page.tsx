@@ -138,6 +138,7 @@ export default function ConsultationHistory() {
 			if (remarksRef.current) remarksRef.current.value = ""
 
 			saveData(data).then(async () => {
+				toast.success("Consultation record added successfully.")
 				const d = await fetchConsultHistory(searchParams?.get('s') || "")
 				setConsultRecords(d)
 			})

@@ -105,7 +105,7 @@ export default function AppointmentPage() {
 				</Button>
 			</HoverCardTrigger>
 			<HoverCardContent align='end' className="p-2 w-fit" sideOffset={10}>
-				Complete Appointment
+				Remind Appointment
 			</HoverCardContent>
 		</HoverCard>
 	}
@@ -233,7 +233,7 @@ export default function AppointmentPage() {
 			if (!date) return;
 			const timestamp = Math.floor(date.getTime() / 1000);
 
-			await rescheduleAppointment(appointmentId, originalTimestamp, timestamp)
+			await rescheduleAppointment(appointmentId, timestamp)
 			toast.success("Appointment Rescheduled")
 			await fetchData()
 		}
@@ -407,7 +407,7 @@ export default function AppointmentPage() {
 								<TableCell className="text-right">
 									{moment.unix(appointment.appointmentTimestamp).local().format('MMMM DD, YYYY @ hh:mm A')}
 								</TableCell>
-								<TableCell className="\text-center">
+								<TableCell className="text-center">
 									<Badge variant='default' className={cn(
 										appointment.status === 'pending' && 'bg-yellow-600 text-yellow-100',
 										appointment.status === 'approved' && 'bg-green-700 text-green-100',
@@ -423,7 +423,6 @@ export default function AppointmentPage() {
 											<>
 												<ApproveButton appointmentId={appointment.id} />
 												<CancelButton appointmentId={appointment.id} />
-												<RescheduleButton appointmentId={appointment.id} originalTimestamp={appointment.appointmentTimestamp} />
 											</>
 										) : (
 											appointment.status === 'approved' ? (<>
