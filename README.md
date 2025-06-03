@@ -53,7 +53,7 @@ Campus Care is a web-based healthcare management platform designed specifically 
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/ROB0520/campus-care.git
    cd campus-care
    ```
 
