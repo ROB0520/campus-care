@@ -199,11 +199,3 @@ Ensure all environment variables are properly configured for your production env
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-For support and questions, please contact the development team or create an issue in the repository.
-
----
-
-Built with ❤️ for educational healthcare management
